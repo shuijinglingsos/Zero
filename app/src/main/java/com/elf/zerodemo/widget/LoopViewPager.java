@@ -1,4 +1,4 @@
-package com.elf.zerodemo;
+package com.elf.zerodemo.widget;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
