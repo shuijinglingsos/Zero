@@ -3,13 +3,14 @@ package com.elf.zerodemo.activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.elf.zerodemo.R;
+public class AppBaseActivity extends AppCompatActivity {
 
-public class NewsDetailActivity extends AppBaseActivity {
+    public final static String ARG_TITLE = "arg_title";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_detail);
+
+        setTitle(getIntent().getStringExtra(ARG_TITLE));
     }
 }

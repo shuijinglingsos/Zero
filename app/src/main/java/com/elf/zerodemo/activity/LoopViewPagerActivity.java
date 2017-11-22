@@ -11,7 +11,7 @@ import android.widget.Toast;
 import com.elf.zerodemo.R;
 import com.elf.zerodemo.widget.LoopViewPager;
 
-public class LoopViewPagerActivity extends AppCompatActivity {
+public class LoopViewPagerActivity extends AppBaseActivity {
 
     private LoopViewPager mLoopViewPager;
     private LoopAdapter mLoopAdapter;

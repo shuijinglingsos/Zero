@@ -1,6 +1,5 @@
 package com.elf.zerodemo.activity;
 
-import android.app.LauncherActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -50,11 +49,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startActivity(int position) {
-        startActivity(new Intent(this, clazzs[position]));
+        Intent intent = new Intent(this, clazzs[position]);
+        intent.putExtra(AppBaseActivity.ARG_TITLE, names[position]);
+        startActivity(intent);
     }
-
-    private void showToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-    }
-
 }
