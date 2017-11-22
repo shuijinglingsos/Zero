@@ -22,12 +22,14 @@ public class MainActivity extends AppCompatActivity {
 
     private String[] names = {
             "LoopViewPager",
-            "NewsDetail"
+            "NewsDetail - ListView",
+            "NewsDetail - ViewGroup"
     };
 
     private Class<?>[] clazzs = {
             LoopViewPagerActivity.class,
-            NewsDetailActivity.class
+            NewsDetailActivity.class,
+            NewsDetailViewGroupActivity.class
     };
 
     @Override
