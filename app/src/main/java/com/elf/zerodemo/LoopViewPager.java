@@ -11,17 +11,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * 循环自动播放的ViewPager
  * Created by Lidong on 2017/11/20.
  */
-public class LoopViewPager extends ViewPager {
+public class LoopViewPager extends FrameLayout {
 
-    private Context mContext;
-    private VPAdapter adapter;
+    /**
+     * 自动播放间隔时间
+     */
+    private final static int INTERVAL = 3000;
+
+    private ViewPager mViewPager;
+    private LoopViewPagerAdapter mAdapter;
+    private boolean mAutoPlaying = false;
+
+    /**
+     * 自动播放
+     */
+    private Runnable mAutoPlayRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1);
+            postDelayed(this, INTERVAL);
+        }
+    };
 
     public LoopViewPager(Context context) {
         this(context, null);
@@ -29,38 +43,43 @@ public class LoopViewPager extends ViewPager {
 
     public LoopViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
+        init();
+    }
 
-        setOnTouchListener(new OnTouchListener() {
+    private void init() {
+        mViewPager = new ViewPager(getContext());
+        mViewPager.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
+                switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                     case MotionEvent.ACTION_MOVE:
-                        removeCallbacks(autoRunnable);
+                        removeCallbacks(mAutoPlayRunnable);
                         break;
 
                     case MotionEvent.ACTION_UP:
-                        postDelayed(autoRunnable,2000);
+                        if (mAutoPlaying) {
+                            postDelayed(mAutoPlayRunnable, INTERVAL);
+                        }
                         break;
                 }
                 return false;
             }
         });
 
-        addOnPageChangeListener(new OnPageChangeListener() {
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 Log.d("ViewPagerImpl", position + "_" + positionOffset + "_" + positionOffsetPixels);
-                Log.d("ViewPagerImpl", "position = " + getCurrentItem());
+                Log.d("ViewPagerImpl", "position = " + mViewPager.getCurrentItem());
 
-                if (positionOffsetPixels == 0 || position < getCurrentItem()) {
-                    FrameLayoutImpl view = getViewByPosition(position);
+                if (positionOffsetPixels == 0 || position < mViewPager.getCurrentItem()) {
+                    ViewPagerItem view = getViewByPosition(mViewPager, position);
                     if (view != null) {
                         view.loadData();
                     }
                 } else {   //后一页显示
-                    FrameLayoutImpl view = getViewByPosition(position + 1);
+                    ViewPagerItem view = getViewByPosition(mViewPager, position + 1);
                     if (view != null) {
                         view.loadData();
                     }
@@ -70,11 +89,11 @@ public class LoopViewPager extends ViewPager {
             @Override
             public void onPageSelected(int position) {
                 Log.d("ViewPagerImpl", "onPageSelected position = " + position);
-                FrameLayoutImpl view = getViewByPosition(position);
+                ViewPagerItem view = getViewByPosition(mViewPager, position);
                 if (view != null) {
                     view.loadData();
                 }
-                index=position;
+                index = position;
             }
 
             private int index;
@@ -82,46 +101,71 @@ public class LoopViewPager extends ViewPager {
             @Override
             public void onPageScrollStateChanged(int state) {
                 Log.d("ViewPagerImpl", "onPageScrollStateChanged state = " + state);
-                if(state==0){
-
-                    if (adapter != null) {
-                        if (index == 0 )
-                            setCurrentItem(adapter.realCount(), false);
-                        else if (index == adapter.getCount() - 1 )
-                            setCurrentItem(adapter.realCount() * 2 - 1, false);
+                if (state == 0) {
+                    if (mAdapter != null) {
+                        if (index == 0) {
+                            mViewPager.setCurrentItem(mAdapter.realCount(), false);
+                        } else if (index == mAdapter.getCount() - 1) {
+                            mViewPager.setCurrentItem(mAdapter.realCount() * 2 - 1, false);
+                        }
                     }
                 }
             }
         });
+
+        addView(mViewPager, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
-    public void setItems(List<View> views) {
-
-        removeCallbacks(autoRunnable);
-
-        adapter = new VPAdapter(mContext);
-        adapter.setmItems(views);
-        setAdapter(adapter);
-
-        setCurrentItem(views.size());
-
-        postDelayed(autoRunnable, 2000);
+    /**
+     * 开始自动播放
+     */
+    public void startAutoPlay(){
+        removeCallbacks(mAutoPlayRunnable);
+        postDelayed(mAutoPlayRunnable, INTERVAL);
+        mAutoPlaying =true;
     }
 
-    private Runnable autoRunnable=new Runnable() {
-        @Override
-        public void run() {
-            setCurrentItem(getCurrentItem() + 1);
-            postDelayed(this,2000);
+    /**
+     * 停止自动播放
+     */
+    public void stopAutoPlay() {
+        mAutoPlaying = false;
+        removeCallbacks(mAutoPlayRunnable);
+    }
+
+    public void setAdapter(LoopViewPagerAdapter adapter) {
+        mAdapter = adapter;
+        mViewPager.setAdapter(adapter);
+        mViewPager.setCurrentItem(adapter.realCount());
+    }
+
+    public void setCurrentItem(int item) {
+        setCurrentItem(item, true);
+    }
+
+    public void setCurrentItem(int item, boolean smoothScroll) {
+        if (mAdapter == null || mAdapter.realCount() < 0 || mAdapter.realCount() - 1 < item) {
+            return;
         }
-    };
+        int currentIndex = mViewPager.getCurrentItem() % mAdapter.realCount();
+        int toIndex = mViewPager.getCurrentItem() - (currentIndex - item);
+        mViewPager.setCurrentItem(toIndex, smoothScroll);
+    }
 
-    private FrameLayoutImpl getViewByPosition(int position) {
-        int count = getChildCount();
+    public int getCurrentItem() {
+        if (mAdapter == null || mAdapter.getCount() < 0) {
+            return 0;
+        }
+        return mViewPager.getCurrentItem() % mAdapter.realCount();
+    }
+
+    private static ViewPagerItem getViewByPosition(ViewGroup container, int position) {
+        int count = container.getChildCount();
         for (int i = 0; i < count; i++) {
-            View view = getChildAt(i);
-            if (view instanceof FrameLayoutImpl) {
-                FrameLayoutImpl item = (FrameLayoutImpl) view;
+            View view = container.getChildAt(i);
+            if (view instanceof ViewPagerItem) {
+                ViewPagerItem item = (ViewPagerItem) view;
                 if (item.getIndex() == position) {
                     return item;
                 }
@@ -130,22 +174,21 @@ public class LoopViewPager extends ViewPager {
         return null;
     }
 
-    private static class VPAdapter extends PagerAdapter {
 
-        private Context mContext;
-        private List<View> mItems = new ArrayList<>();
+    /**
+     * ViewPager适配器
+     */
+    public static abstract class LoopViewPagerAdapter extends PagerAdapter {
 
-        VPAdapter(Context context) {
+        protected Context mContext;
+
+        public LoopViewPagerAdapter(Context context) {
             mContext = context;
-        }
-
-        void setmItems(List<View> items) {
-            mItems = items;
         }
 
         @Override
         public int getCount() {
-            return mItems.size() < 2 ? mItems.size() : mItems.size() *3;  //Integer.MAX_VALUE;
+            return realCount() < 2 ? realCount() : realCount() * 3;  //Integer.MAX_VALUE;
         }
 
         @Override
@@ -155,39 +198,44 @@ public class LoopViewPager extends ViewPager {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            FrameLayoutImpl item = new FrameLayoutImpl(mContext);
-            item.setView(position, mItems.get(tranfserPosition(position)));
+            ViewPagerItem item = new ViewPagerItem(mContext);
+            item.setView(position, instantiateItemView(tranfserPosition(position)));
             container.addView(item);
             return item;
         }
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-            FrameLayoutImpl view =((LoopViewPager)container).getViewByPosition(position);
+            ViewPagerItem view = getViewByPosition(container ,position);
             if (view != null) {
                 container.removeView(view);
             }
         }
 
         private int tranfserPosition(int position) {
-            if (mItems.size() < 2) {
+            if (realCount() < 2) {
                 return position;
             }
 
-            return position % mItems.size();
+            return position % realCount();
         }
 
-        int realCount(){
-            return mItems.size();
-        }
+
+
+        public abstract View instantiateItemView(int position);
+
+        public abstract int realCount();
     }
 
-    public static class FrameLayoutImpl extends FrameLayout {
+    /**
+     * ViewPager项目
+     */
+    public static class ViewPagerItem extends FrameLayout {
 
         private View mView;
         private int mIndex;
 
-        public FrameLayoutImpl(@NonNull Context context) {
+        public ViewPagerItem(@NonNull Context context) {
             super(context);
         }
 
