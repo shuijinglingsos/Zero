@@ -1,11 +1,10 @@
 package com.elf.zerodemo.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.elf.zerodemo.R;
 
-public class NetworkUtilsActivity extends AppCompatActivity {
+public class NetworkUtilsActivity extends AppBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
