@@ -8,5 +8,6 @@ import android.support.v7.app.AppCompatActivity;
  */
 public abstract class BaseActivity extends AppCompatActivity {
 
-    private final static String TAG = "BaseActivity";
+    private final static String TAG = BaseActivity.class.getSimpleName();
+
 }
