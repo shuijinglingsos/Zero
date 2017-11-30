@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
             "NewsDetail - ViewGroup",
             "AppUtils",
             "DeviceUtils",
-
+            "NetworkUtils",
             "About"
     };
 
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
             NewsDetailViewGroupActivity.class,
             AppUtilsActivity.class,
             DeviceUtilsActivity.class,
-
+            NetworkUtilsActivity.class,
             AboutActivity.class
     };
 
