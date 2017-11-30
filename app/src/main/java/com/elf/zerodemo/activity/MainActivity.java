@@ -8,8 +8,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
+import com.elf.zero.Zero;
 import com.elf.zerodemo.R;
 
 
@@ -23,19 +23,29 @@ public class MainActivity extends AppCompatActivity {
     private String[] names = {
             "LoopViewPager",
             "NewsDetail - ListView",
-            "NewsDetail - ViewGroup"
+            "NewsDetail - ViewGroup",
+            "AppUtils",
+            "DeviceUtils",
+
+            "About"
     };
 
     private Class<?>[] clazzs = {
             LoopViewPagerActivity.class,
             NewsDetailActivity.class,
-            NewsDetailViewGroupActivity.class
+            NewsDetailViewGroupActivity.class,
+            AppUtilsActivity.class,
+            DeviceUtilsActivity.class,
+
+            AboutActivity.class
     };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Zero.init(getApplicationContext());
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_list_item_1, names);
