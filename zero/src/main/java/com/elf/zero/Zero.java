@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.elf.zero.utils.AppUtils;
 import com.elf.zero.utils.DeviceUtils;
+import com.elf.zero.utils.NetworkUtils;
 
 /**
  * zero
@@ -19,5 +20,6 @@ public class Zero {
     public static void init(Context context) {
         AppUtils.init(context);
         DeviceUtils.init(context);
+        NetworkUtils.init(context);
     }
 }

@@ -29,6 +29,7 @@
         <activity android:name=".activity.AppUtilsActivity" />
         <activity android:name=".activity.DeviceUtilsActivity" />
         <activity android:name=".activity.AboutActivity" />
+        <activity android:name=".activity.NetworkUtilsActivity" />
     </application>
 
 </manifest>
