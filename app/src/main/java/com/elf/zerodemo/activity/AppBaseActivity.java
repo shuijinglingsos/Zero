@@ -2,6 +2,7 @@ package com.elf.zerodemo.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 public class AppBaseActivity extends AppCompatActivity {
 
@@ -12,5 +13,9 @@ public class AppBaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setTitle(getIntent().getStringExtra(ARG_TITLE));
+    }
+
+    protected void showToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 }
