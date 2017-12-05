@@ -1,12 +1,10 @@
 package com.elf.zerodemo.activity;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.elf.zerodemo.R;
 import com.elf.zerodemo.widget.LoopViewPager;
@@ -27,7 +25,7 @@ public class LoopViewPagerActivity extends AppBaseActivity {
     }
 
     public void onShowIndex(View view) {
-        showToast("" + mLoopViewPager.getRealPosition(mLoopViewPager.getViewPager().getCurrentItem()));
+        showToast("" + mLoopViewPager.getRealPosition());
     }
 
     public void onAutoPlay(View view) {
@@ -84,7 +82,13 @@ public class LoopViewPagerActivity extends AppBaseActivity {
         }
     }
 
-    private void showToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+
+    @Override
+    protected void onDestroy() {
+        if (mLoopViewPager != null) {
+            mLoopViewPager.stopAutoPlay();
+        }
+        super.onDestroy();
+
     }
 }

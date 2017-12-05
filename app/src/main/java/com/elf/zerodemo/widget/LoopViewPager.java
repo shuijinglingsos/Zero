@@ -17,6 +17,8 @@ import android.widget.FrameLayout;
  */
 public class LoopViewPager extends FrameLayout {
 
+    private final static String TAG = LoopViewPager.class.getSimpleName();
+
     /**
      * 自动播放间隔时间
      */
@@ -33,7 +35,10 @@ public class LoopViewPager extends FrameLayout {
         @Override
         public void run() {
             mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1);
-            postDelayed(this, INTERVAL);
+            Log.i(TAG, "AutoPlay to " + mViewPager.getCurrentItem());
+            if (mAutoPlaying) {
+                postDelayed(this, INTERVAL);
+            }
         }
     };
 
@@ -70,9 +75,6 @@ public class LoopViewPager extends FrameLayout {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                Log.d("ViewPagerImpl", position + "_" + positionOffset + "_" + positionOffsetPixels);
-                Log.d("ViewPagerImpl", "position = " + mViewPager.getCurrentItem());
-
                 //这里延迟加载数据，只有当前页面显示出来的时候才加载数据
                 if (positionOffsetPixels == 0 || position < mViewPager.getCurrentItem()) {
                     ViewPagerItem view = getViewByPosition(mViewPager, position);
@@ -89,7 +91,6 @@ public class LoopViewPager extends FrameLayout {
 
             @Override
             public void onPageSelected(int position) {
-                Log.d("ViewPagerImpl", "onPageSelected position = " + position);
                 ViewPagerItem view = getViewByPosition(mViewPager, position);
                 if (view != null) {
                     view.loadData();
@@ -124,6 +125,7 @@ public class LoopViewPager extends FrameLayout {
 
     /**
      * 设置adapter
+     *
      * @param adapter adapter
      */
     public void setAdapter(LoopViewPagerAdapter adapter) {
@@ -134,8 +136,9 @@ public class LoopViewPager extends FrameLayout {
 
     /**
      * 获取真实的position
+     *
      * @param position position
-     * @return  真实的position
+     * @return 真实的position
      */
     public int getRealPosition(int position) {
         if (mAdapter == null || mAdapter.getCount() < 0) {
@@ -145,9 +148,22 @@ public class LoopViewPager extends FrameLayout {
     }
 
     /**
+     * 取真实的position
+     *
+     * @return 真实的position
+     */
+    public int getRealPosition() {
+        if (mAdapter == null || mAdapter.getCount() < 0) {
+            return 0;
+        }
+        return mAdapter.getRealPosition(mViewPager.getCurrentItem());
+    }
+
+    /**
      * 获取指定位置的view
+     *
      * @param container container
-     * @param position position
+     * @param position  position
      * @return view
      */
     public static ViewPagerItem getViewByPosition(ViewGroup container, int position) {
@@ -166,9 +182,10 @@ public class LoopViewPager extends FrameLayout {
 
     /**
      * 获取 ViewPager
-     * @return  ViewPager
+     *
+     * @return ViewPager
      */
-    public ViewPager getViewPager(){
+    public ViewPager getViewPager() {
         return mViewPager;
     }
 
@@ -211,6 +228,7 @@ public class LoopViewPager extends FrameLayout {
 
         /**
          * 获取实际的postion
+         *
          * @param position ViewPager返回的position
          * @return 实际的postion
          */
@@ -223,6 +241,7 @@ public class LoopViewPager extends FrameLayout {
 
         /**
          * 构建ItemView
+         *
          * @param position 实际的postion
          * @return view
          */
@@ -230,7 +249,8 @@ public class LoopViewPager extends FrameLayout {
 
         /**
          * 获取实际数量
-         * @return  实际数量
+         *
+         * @return 实际数量
          */
         public abstract int getRealCount();
     }
