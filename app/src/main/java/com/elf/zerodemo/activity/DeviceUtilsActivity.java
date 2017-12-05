@@ -44,6 +44,7 @@ public class DeviceUtilsActivity extends AppBaseActivity {
         sb.append("\nMAC地址：").append(DeviceUtils.getMacAddress());
         sb.append("\n电话号码：").append(DeviceUtils.getTelephoneNumber());
         sb.append("\n运营商名称：").append(DeviceUtils.getNetworkOperatorName());
+        sb.append("\n是否支持NFC：").append(DeviceUtils.isSupportNFC());
 
         ((TextView) findViewById(R.id.textView)).setText(sb.toString());
     }
