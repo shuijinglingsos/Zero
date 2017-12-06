@@ -21,6 +21,7 @@ import com.elf.zerodemo.R;
 public class MainActivity extends AppCompatActivity {
 
     private String[] names = {
+            "NetRequest",
             "LoopViewPager",
             "NewsDetail - ListView",
             "NewsDetail - ViewGroup",
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private Class<?>[] clazzs = {
+            NetRequestActivity.class,
             LoopViewPagerActivity.class,
             NewsDetailActivity.class,
             NewsDetailViewGroupActivity.class,

@@ -30,6 +30,7 @@
         <activity android:name=".activity.DeviceUtilsActivity" />
         <activity android:name=".activity.AboutActivity" />
         <activity android:name=".activity.NetworkUtilsActivity" />
+        <activity android:name=".activity.NetRequestActivity" />
     </application>
 
 </manifest>
