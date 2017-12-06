@@ -15,6 +15,8 @@ import com.elf.zerodemo.R;
  */
 public class NetRequestActivity extends AppBaseActivity {
 
+    private String mUrl = "https://www.baidu.com";
+
     private TextView mTextView;
 
     @Override
@@ -31,7 +33,7 @@ public class NetRequestActivity extends AppBaseActivity {
             public void run() {
                 try {
                     DefaultNetRequest request = new DefaultNetRequest();
-                    request.setUrl("http://www.baidu.com");
+                    request.setUrl(mUrl);
                     NetResponse response = request.get();
                     if (response.getResponseCode() == 200) {
                         String result = new String(response.getResponseContent());
@@ -49,7 +51,7 @@ public class NetRequestActivity extends AppBaseActivity {
 
     public void onTestGetAsyn(View view) {
         DefaultNetRequest request = new DefaultNetRequest();
-        request.setUrl("http://www.baidu.com");
+        request.setUrl(mUrl);
         request.get(new NetRequestListener() {
             @Override
             public void onSuccess(NetResponse response) {
