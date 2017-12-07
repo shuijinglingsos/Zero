@@ -88,8 +88,37 @@ public class DefaultNetRequest extends AbstractNetRequest {
     }
 
     @Override
-    public void post(String params, NetRequestListener listener) {
-
+    public void post(final String params, final NetRequestListener listener) {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    checkUrl();
+                    mHttpURLConnection = (HttpURLConnection) new URL(getUrl()).openConnection();
+                    mHttpURLConnection.setRequestMethod("POST");
+                    if (!TextUtils.isEmpty(params)) {
+                        OutputStream os = mHttpURLConnection.getOutputStream();
+                        os.write(params.getBytes());
+                        os.flush();
+                    }
+                    int responseCode = mHttpURLConnection.getResponseCode();
+                    if (responseCode == 200) {
+                        if (listener != null) {
+                            listener.onSuccess(buildResponse());
+                        }
+                    } else {
+                        if (listener != null) {
+                            listener.onFailure(new NetException(responseCode, mHttpURLConnection.getResponseMessage()));
+                        }
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    if (listener != null) {
+                        listener.onFailure(new NetException(-1, ex));
+                    }
+                }
+            }
+        }.start();
     }
 
     @Override
