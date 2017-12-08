@@ -22,11 +22,6 @@ public class NetException extends Exception {
         return mResponseCode;
     }
 
-    public Exception getException() {
-        return mException;
-    }
-
-
     @Override
     public void printStackTrace() {
         if (mException == null) {

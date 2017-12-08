@@ -33,5 +33,9 @@ public interface NetRequest {
 
     void form(Map<String, String> fields, Map<String, File> files, NetRequestListener listener);
 
-    void close();
+    void download(NetDownloadListener listener);
+
+    void cancel();
+
+    boolean isCancel();
 }

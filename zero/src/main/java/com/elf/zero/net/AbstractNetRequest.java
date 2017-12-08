@@ -1,8 +1,5 @@
 package com.elf.zero.net;
 
-import android.text.TextUtils;
-
-import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +9,10 @@ import java.util.Map;
  */
 public abstract class AbstractNetRequest implements NetRequest {
 
+    protected final String METHOD_GET = "GET";
+    protected final String METHOD_POST = "POST";
+
+    private boolean mCancel;
     private String mUrl;
     private Map<String, String> mHeaders = new HashMap<>();
 
@@ -36,8 +37,28 @@ public abstract class AbstractNetRequest implements NetRequest {
     }
 
     @Override
+    public void cancel() {
+        mCancel = true;
+    }
+
+    @Override
+    public boolean isCancel() {
+        return mCancel;
+    }
+
+    @Override
     public NetResponse get() throws NetException {
         return get(new HashMap<String, String>());
+    }
+
+    @Override
+    public NetResponse get(Map<String, String> params) throws NetException {
+        return request(getUrl(), METHOD_GET, params, null);
+    }
+
+    @Override
+    public NetResponse post(String params) throws NetException {
+        return request(getUrl(), METHOD_POST, null, params);
     }
 
     @Override
@@ -45,23 +66,28 @@ public abstract class AbstractNetRequest implements NetRequest {
         get(null, listener);
     }
 
-    /**
-     * 校验url
-     * @throws NetException url不是合法
-     */
-    protected void checkUrl() throws NetException {
-        if (TextUtils.isEmpty(getUrl())) {
-            throw new NetException(-1, new IllegalArgumentException("url is empty:" + getUrl()));
-        }
+    @Override
+    public void get(final Map<String, String> params, final NetRequestListener listener) {
+        request(getUrl(), METHOD_GET, params, null, listener);
     }
+
+    @Override
+    public void post(final String params, final NetRequestListener listener) {
+        request(getUrl(), METHOD_POST, null, params, listener);
+    }
+
+    protected abstract NetResponse request(String url, String method, Map<String, String> getParams, String postParams) throws NetException;
+
+    protected abstract void request(final String url, final String method, final Map<String, String> getParams, final String postParams, final NetRequestListener listener);
 
     /**
      * 追加参数
+     *
+     * @param url    url
      * @param params 参数集合
      * @return 返回追加参数后的url
      */
-    protected String appendParams(Map<String, String> params) {
-        String url = getUrl();
+    protected String appendParams(String url, Map<String, String> params) {
         if (params != null && !params.isEmpty()) {
             if (url.contains("?")) {
                 if (!url.endsWith("?")) {  //最后一位是问号

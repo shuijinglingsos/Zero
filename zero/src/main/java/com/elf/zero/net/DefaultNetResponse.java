@@ -2,6 +2,7 @@ package com.elf.zero.net;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
