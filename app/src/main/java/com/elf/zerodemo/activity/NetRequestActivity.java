@@ -2,6 +2,7 @@ package com.elf.zerodemo.activity;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.elf.zero.net.DefaultNetRequest;
@@ -16,8 +17,8 @@ import com.elf.zerodemo.R;
  */
 public class NetRequestActivity extends AppBaseActivity {
 
-    private String mUrl = "https://www.baidu.com";
     private TextView mTextView;
+    private EditText mEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +26,8 @@ public class NetRequestActivity extends AppBaseActivity {
         setContentView(R.layout.activity_net_connection);
 
         mTextView = (TextView) findViewById(R.id.textView);
+        mEditText = (EditText) findViewById(R.id.editText);
+        mEditText.setText("https://www.baidu.com");
     }
 
     private void showResult(final String msg) {
@@ -36,23 +39,23 @@ public class NetRequestActivity extends AppBaseActivity {
         });
     }
 
+    private String getUrl() {
+        return mEditText.getText().toString().trim();
+    }
+
     public void onGet(View view) {
         new Thread() {
             @Override
             public void run() {
                 try {
                     NetRequest request = new DefaultNetRequest();
-                    request.setUrl(mUrl);
+                    request.setUrl(getUrl());
                     NetResponse response = request.get();
-                    if (response.getResponseCode() == 200) {
-                        String result = new String(response.getResponseContent());
-                        showResult(result);
-                    } else {
-                        showResult(response.getResponseCode() + " " + response.getResponseMessage());
-                    }
+                    String result = new String(response.getResponseContent());
+                    showResult(result);
                 } catch (NetException e) {
                     e.printStackTrace();
-                    showResult(e.getException().getMessage());
+                    showResult(e.getResponseCode() + " " + e.getMessage());
                 }
             }
         }.start();
@@ -60,7 +63,7 @@ public class NetRequestActivity extends AppBaseActivity {
 
     public void onGetAsyn(View view) {
         NetRequest request = new DefaultNetRequest();
-        request.setUrl(mUrl);
+        request.setUrl(getUrl());
         request.get(new NetRequestListener() {
             @Override
             public void onSuccess(NetResponse response) {
@@ -70,7 +73,7 @@ public class NetRequestActivity extends AppBaseActivity {
 
             @Override
             public void onFailure(NetException exception) {
-                showResult(exception.getResponseCode() + " " + exception.getException().getMessage());
+                showResult(exception.getResponseCode() + " " + exception.getMessage());
             }
         });
     }
@@ -81,17 +84,13 @@ public class NetRequestActivity extends AppBaseActivity {
             public void run() {
                 try {
                     NetRequest request = new DefaultNetRequest();
-                    request.setUrl(mUrl);
+                    request.setUrl(getUrl());
                     NetResponse response = request.post(null);
-                    if (response.getResponseCode() == 200) {
-                        String result = new String(response.getResponseContent());
-                        showResult(result);
-                    } else {
-                        showResult(response.getResponseCode() + " " + response.getResponseMessage());
-                    }
+                    String result = new String(response.getResponseContent());
+                    showResult(result);
                 } catch (NetException e) {
                     e.printStackTrace();
-                    showResult(e.getException().getMessage());
+                    showResult(e.getResponseCode() + " " + e.getMessage());
                 }
             }
         }.start();
@@ -99,8 +98,8 @@ public class NetRequestActivity extends AppBaseActivity {
 
     public void onPostAsyn(View view) {
         NetRequest request = new DefaultNetRequest();
-        request.setUrl(mUrl);
-        request.post(null,new NetRequestListener() {
+        request.setUrl(getUrl());
+        request.post(null, new NetRequestListener() {
             @Override
             public void onSuccess(NetResponse response) {
                 String result = new String(response.getResponseContent());
@@ -109,8 +108,9 @@ public class NetRequestActivity extends AppBaseActivity {
 
             @Override
             public void onFailure(NetException exception) {
-                showResult(exception.getResponseCode() + " " + exception.getException().getMessage());
+                showResult(exception.getResponseCode() + " " + exception.getMessage());
             }
         });
     }
+
 }

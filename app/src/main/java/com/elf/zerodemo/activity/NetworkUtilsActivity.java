@@ -18,6 +18,7 @@ public class NetworkUtilsActivity extends AppBaseActivity {
         sb.append("\n是否是wifi网络：").append(NetworkUtils.isWifiConnection());
         sb.append("\n是否是移动网络：").append(NetworkUtils.isMobileConnection());
         sb.append("\n当前网络类型：").append(NetworkUtils.getNetworkType());
+//        sb.append("\n网络是否真正可用").append(NetworkUtils.isNetAvailable());
 
         ((TextView) findViewById(R.id.textView)).setText(sb.toString());
     }
