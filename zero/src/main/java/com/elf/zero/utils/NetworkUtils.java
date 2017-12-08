@@ -107,4 +107,16 @@ public class NetworkUtils {
         }
         return NETWORK_TYPE_UNKNOWN;
     }
+
+//    public static boolean isNetAvailable() {
+//        try {
+//            Runtime runtime = Runtime.getRuntime();
+//            Process p = runtime.exec("ping -c 3 www.baidu.com");
+//            int ret = p.waitFor();
+//            return ret == 0;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
 }
