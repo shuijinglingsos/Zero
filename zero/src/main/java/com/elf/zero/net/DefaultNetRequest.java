@@ -2,6 +2,17 @@ package com.elf.zero.net;
 
 import android.text.TextUtils;
 
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +23,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 /**
  * 默认网络请求
@@ -22,14 +34,131 @@ public class DefaultNetRequest extends AbstractNetRequest {
     private HttpURLConnection mHttpURLConnection;
 
 
+    @SuppressWarnings("deprecation")
     @Override
     public NetResponse form(Map<String, String> fields, Map<String, File> files) throws NetException {
-        return null;
+
+        try {
+            MultipartEntity multipartEntity = new MultipartEntity();
+            for (String key : fields.keySet()) {
+                multipartEntity.addPart(key, new StringBody(fields.get(key)));
+            }
+            for (String key : files.keySet()) {
+                multipartEntity.addPart(key, new FileBody(files.get(key)));
+            }
+            // 请求
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpPost post = new HttpPost(getUrl());
+            post.setEntity(multipartEntity);
+
+            Map<String, String> requestHeaders = getHeaders();
+            if (requestHeaders != null && !requestHeaders.isEmpty()) {
+                for (String key : requestHeaders.keySet()) {
+                    post.addHeader(key, requestHeaders.get(key));
+                }
+            }
+            HttpResponse response = httpClient.execute(post);
+            int responseCode = response.getStatusLine().getStatusCode();
+            if (responseCode == 200) {
+                InputStream is = getInputStream(response, response.getEntity());
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                int len;
+                byte buffer[] = new byte[1024];
+                while ((len = is.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, len);
+                }
+                is.close();
+                outputStream.close();
+
+                Map<String, String> responseHeader = new HashMap<>();
+                Header[] map = response.getAllHeaders();
+                if (map != null && map.length > 0) {
+                    for (Header header : map) {
+                        responseHeader.put(header.getName(), header.getValue());
+                    }
+                }
+
+                return new DefaultNetResponse(
+                        responseCode,
+                        response.getStatusLine().getReasonPhrase(),
+                        outputStream.toByteArray(),
+                        responseHeader);
+            } else {
+                throw new NetException(responseCode, mHttpURLConnection.getResponseMessage());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new NetException(-1, e);
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private InputStream getInputStream(HttpResponse response, HttpEntity entity) throws IOException {
+
+        InputStream is = entity.getContent();
+        boolean gzip = false;
+        if (response.containsHeader("Content-Encoding")) {// [Content-Language:
+            // zh-CN,
+            // Content-Encoding:
+            // gzip,
+            // Content-Length:
+            // 10,
+            // Server:
+            // Jetty(6.1.26)]
+            String gzipStr = response.getHeaders("Content-Encoding")[0]
+                    .getValue();
+            gzip = gzipStr.equals("gzip");
+        }
+        if (gzip) {// 头文件支持压缩 -- 然后检测数据格式是否为GZIP压缩
+            BufferedInputStream bis = new BufferedInputStream(is);
+            bis.mark(2);
+            // 取前两个字节
+            byte[] header = new byte[2];
+            int result = bis.read(header);
+            // reset输入流到开始位置
+            bis.reset();
+            // 判断是否是GZIP格式
+            int headerData = getShort(header);
+            // Gzip 流 的前两个字节是 0x1f8b
+            if (result != -1 && headerData == 0x1f8b) {
+                // DebugUtil.debug(TAG, " use GZIPInputStream  ");
+                is = new GZIPInputStream(bis);
+            } else {
+                // DebugUtil.debug(TAG, " not use GZIPInputStream");
+                is = bis;
+            }
+        }
+        return is;
+    }
+
+    private int getShort(byte[] data) {
+        return ((data[0] << 8) | data[1] & 0xFF);
     }
 
     @Override
-    public void form(Map<String, String> fields, Map<String, File> files, NetRequestListener listener) {
-
+    public void form(final Map<String, String> fields, final Map<String, File> files, final NetRequestListener listener) {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    NetResponse netResponse = form(fields, files);
+                    if (isCancel()) {
+                        return;
+                    }
+                    if (listener != null) {
+                        listener.onSuccess(netResponse);
+                    }
+                } catch (NetException ex) {
+                    ex.printStackTrace();
+                    if (isCancel()) {
+                        return;
+                    }
+                    if (listener != null) {
+                        listener.onFailure(ex);
+                    }
+                }
+            }
+        }.start();
     }
 
     @Override
