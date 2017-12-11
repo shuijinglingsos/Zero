@@ -6,11 +6,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.elf.zero.net.DefaultNetRequest;
+import com.elf.zero.net.NetDownloadListener;
 import com.elf.zero.net.NetException;
 import com.elf.zero.net.NetRequest;
 import com.elf.zero.net.NetRequestListener;
 import com.elf.zero.net.NetResponse;
 import com.elf.zerodemo.R;
+
+import java.io.File;
+import java.util.Map;
 
 /**
  * 网络连接测试页面
@@ -113,4 +117,33 @@ public class NetRequestActivity extends AppBaseActivity {
         });
     }
 
+    public void onDownload(View view) {
+        File file = new File(getCacheDir().getPath() + "/file.apk");
+
+        String url = "http://192.168.1.110/app/cmb_app.apk";
+
+        NetRequest request = new DefaultNetRequest();
+        request.setUrl(url);
+        request.download(file, new NetDownloadListener() {
+            @Override
+            public void onProgress(int readCount, int totalCount) {
+                showResult(readCount + "/" + totalCount);
+            }
+
+            @Override
+            public void onFailure(NetException exception) {
+                showResult(exception.getResponseCode() + " " + exception.getMessage());
+            }
+
+            @Override
+            public void onSuccess(File file, Map<String, String> headers) {
+                StringBuilder sb = new StringBuilder();
+                for (String key : headers.keySet()) {
+                    sb.append("\n").append(key).append("=").append(headers.get(key));
+                }
+
+                showResult("success：" + file.getPath() + sb.toString());
+            }
+        });
+    }
 }
