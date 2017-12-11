@@ -1,6 +1,7 @@
 package com.elf.zero.net;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  * 下载监听
@@ -12,5 +13,5 @@ public interface NetDownloadListener {
 
     void onFailure(NetException exception);
 
-    void onSuccess(File file);
+    void onSuccess(File file, Map<String, String> headers);
 }

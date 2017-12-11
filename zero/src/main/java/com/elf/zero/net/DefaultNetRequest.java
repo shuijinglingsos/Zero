@@ -2,6 +2,8 @@ package com.elf.zero.net;
 
 import android.text.TextUtils;
 
+import com.elf.zero.utils.StreamUtils;
+
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -13,8 +15,8 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -61,14 +63,8 @@ public class DefaultNetRequest extends AbstractNetRequest {
             int responseCode = response.getStatusLine().getStatusCode();
             if (responseCode == 200) {
                 InputStream is = getInputStream(response, response.getEntity());
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                int len;
-                byte buffer[] = new byte[1024];
-                while ((len = is.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, len);
-                }
+                byte[] result = StreamUtils.streamToByteArray(is);
                 is.close();
-                outputStream.close();
 
                 Map<String, String> responseHeader = new HashMap<>();
                 Header[] map = response.getAllHeaders();
@@ -81,7 +77,7 @@ public class DefaultNetRequest extends AbstractNetRequest {
                 return new DefaultNetResponse(
                         responseCode,
                         response.getStatusLine().getReasonPhrase(),
-                        outputStream.toByteArray(),
+                        result,
                         responseHeader);
             } else {
                 throw new NetException(responseCode, mHttpURLConnection.getResponseMessage());
@@ -97,14 +93,7 @@ public class DefaultNetRequest extends AbstractNetRequest {
 
         InputStream is = entity.getContent();
         boolean gzip = false;
-        if (response.containsHeader("Content-Encoding")) {// [Content-Language:
-            // zh-CN,
-            // Content-Encoding:
-            // gzip,
-            // Content-Length:
-            // 10,
-            // Server:
-            // Jetty(6.1.26)]
+        if (response.containsHeader("Content-Encoding")) {
             String gzipStr = response.getHeaders("Content-Encoding")[0]
                     .getValue();
             gzip = gzipStr.equals("gzip");
@@ -121,10 +110,8 @@ public class DefaultNetRequest extends AbstractNetRequest {
             int headerData = getShort(header);
             // Gzip 流 的前两个字节是 0x1f8b
             if (result != -1 && headerData == 0x1f8b) {
-                // DebugUtil.debug(TAG, " use GZIPInputStream  ");
                 is = new GZIPInputStream(bis);
             } else {
-                // DebugUtil.debug(TAG, " not use GZIPInputStream");
                 is = bis;
             }
         }
@@ -162,8 +149,66 @@ public class DefaultNetRequest extends AbstractNetRequest {
     }
 
     @Override
-    public void download(NetDownloadListener listener) {
+    public void download(final File saveFile, final NetDownloadListener listener) {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    mHttpURLConnection = (HttpURLConnection) new URL(getUrl()).openConnection();
+                    mHttpURLConnection.setRequestMethod(METHOD_GET);
 
+                    Map<String, String> requestHeaders = getHeaders();
+                    if (requestHeaders != null && !requestHeaders.isEmpty()) {
+                        for (String key : requestHeaders.keySet()) {
+                            mHttpURLConnection.setRequestProperty(key, requestHeaders.get(key));
+                        }
+                    }
+
+                    int responseCode = mHttpURLConnection.getResponseCode();
+
+                    if (responseCode == 200) {
+                        InputStream is = mHttpURLConnection.getInputStream();
+
+                        int length = mHttpURLConnection.getContentLength();
+
+                        FileOutputStream fos = new FileOutputStream(saveFile);
+                        byte[] buffer = new byte[1024];
+                        int readCount = 0, len;
+                        while ((len = is.read(buffer)) != -1) {
+                            readCount += len;
+                            fos.write(buffer, 0, len);
+                            if (listener != null) {
+                                listener.onProgress(readCount, length);
+                            }
+                        }
+                        is.close();
+                        fos.close();
+
+                        Map<String, String> responseHeader = new HashMap<>();
+                        Map<String, List<String>> map = mHttpURLConnection.getHeaderFields();
+                        if (map != null && !map.isEmpty()) {
+                            for (String key : map.keySet()) {
+                                responseHeader.put(key, map.get(key).get(0));
+                            }
+                        }
+
+                        if (listener != null) {
+                            listener.onSuccess(saveFile, responseHeader);
+                        }
+
+                    } else {
+                        if (listener != null) {
+                            listener.onFailure(new NetException(responseCode, mHttpURLConnection.getResponseMessage()));
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    if (listener != null) {
+                        listener.onFailure(new NetException(-1, e));
+                    }
+                }
+            }
+        }.start();
     }
 
     @Override
@@ -193,6 +238,7 @@ public class DefaultNetRequest extends AbstractNetRequest {
             mHttpURLConnection = (HttpURLConnection) new URL(url).openConnection();
             mHttpURLConnection.setRequestMethod(method);
             mHttpURLConnection.setUseCaches(false);
+            mHttpURLConnection.setDoOutput(true);
 
             Map<String, String> requestHeaders = getHeaders();
             if (requestHeaders != null && !requestHeaders.isEmpty()) {
@@ -202,7 +248,6 @@ public class DefaultNetRequest extends AbstractNetRequest {
             }
 
             if (METHOD_POST.equals(method)) {
-                mHttpURLConnection.setDoOutput(true);
                 if (!TextUtils.isEmpty(postParams)) {
                     OutputStream os = mHttpURLConnection.getOutputStream();
                     os.write(postParams.getBytes());
@@ -213,14 +258,8 @@ public class DefaultNetRequest extends AbstractNetRequest {
             int responseCode = mHttpURLConnection.getResponseCode();
             if (responseCode == 200) {
                 InputStream is = mHttpURLConnection.getInputStream();
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                int len;
-                byte buffer[] = new byte[1024];
-                while ((len = is.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, len);
-                }
+                byte[] result = StreamUtils.streamToByteArray(is);
                 is.close();
-                outputStream.close();
 
                 Map<String, String> responseHeader = new HashMap<>();
                 Map<String, List<String>> map = mHttpURLConnection.getHeaderFields();
@@ -233,7 +272,7 @@ public class DefaultNetRequest extends AbstractNetRequest {
                 return new DefaultNetResponse(
                         mHttpURLConnection.getResponseCode(),
                         mHttpURLConnection.getResponseMessage(),
-                        outputStream.toByteArray(),
+                        result,
                         responseHeader);
             } else {
                 throw new NetException(responseCode, mHttpURLConnection.getResponseMessage());
