@@ -22,18 +22,8 @@ public abstract class AbstractNetRequest implements NetRequest {
     }
 
     @Override
-    public String getUrl() {
-        return mUrl;
-    }
-
-    @Override
-    public void setHeaders(Map<String, String> headers) {
+    public void setRequestHeaders(Map<String, String> headers) {
         mHeaders = headers;
-    }
-
-    @Override
-    public Map<String, String> getHeaders() {
-        return mHeaders;
     }
 
     @Override
@@ -47,11 +37,6 @@ public abstract class AbstractNetRequest implements NetRequest {
     }
 
     @Override
-    public NetResponse get() throws NetException {
-        return get(new HashMap<String, String>());
-    }
-
-    @Override
     public NetResponse get(Map<String, String> params) throws NetException {
         return request(getUrl(), METHOD_GET, params, null);
     }
@@ -62,11 +47,6 @@ public abstract class AbstractNetRequest implements NetRequest {
     }
 
     @Override
-    public void get(NetRequestListener listener) {
-        get(null, listener);
-    }
-
-    @Override
     public void get(final Map<String, String> params, final NetRequestListener listener) {
         request(getUrl(), METHOD_GET, params, null, listener);
     }
@@ -74,6 +54,14 @@ public abstract class AbstractNetRequest implements NetRequest {
     @Override
     public void post(final String params, final NetRequestListener listener) {
         request(getUrl(), METHOD_POST, null, params, listener);
+    }
+
+    protected String getUrl() {
+        return mUrl;
+    }
+
+    protected Map<String, String> getHeaders() {
+        return mHeaders;
     }
 
     protected abstract NetResponse request(String url, String method, Map<String, String> getParams, String postParams) throws NetException;

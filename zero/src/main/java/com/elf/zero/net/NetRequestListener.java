@@ -1,7 +1,7 @@
 package com.elf.zero.net;
 
 /**
- * 网络连接监听
+ * 异步网络请求监听（此类内的回调方法都是在异步线程）
  * Created by Lidong on 2017/12/6.
  */
 public interface NetRequestListener {

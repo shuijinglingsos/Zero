@@ -35,7 +35,6 @@ public class DefaultNetRequest extends AbstractNetRequest {
 
     private HttpURLConnection mHttpURLConnection;
 
-
     @SuppressWarnings("deprecation")
     @Override
     public NetResponse form(Map<String, String> fields, Map<String, File> files) throws NetException {
@@ -235,10 +234,15 @@ public class DefaultNetRequest extends AbstractNetRequest {
             if (METHOD_GET.equals(method)) {
                 url = appendParams(url, getParams);
             }
-            mHttpURLConnection = (HttpURLConnection) new URL(url).openConnection();
-            mHttpURLConnection.setRequestMethod(method);
-            mHttpURLConnection.setUseCaches(false);
+
+            URL url_o = new URL(url);
+            mHttpURLConnection = (HttpURLConnection) url_o.openConnection();
+            mHttpURLConnection.setRequestMethod("POST");
+            mHttpURLConnection.setDoInput(true);
             mHttpURLConnection.setDoOutput(true);
+            mHttpURLConnection.setUseCaches(false);
+
+            mHttpURLConnection.setRequestProperty("Content-Type", "application/text");
 
             Map<String, String> requestHeaders = getHeaders();
             if (requestHeaders != null && !requestHeaders.isEmpty()) {

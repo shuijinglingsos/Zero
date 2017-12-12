@@ -3,7 +3,6 @@ package com.elf.zero.utils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
 
 /**
  * 流工具类

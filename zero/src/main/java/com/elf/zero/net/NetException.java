@@ -1,5 +1,7 @@
 package com.elf.zero.net;
 
+import java.net.UnknownHostException;
+
 /**
  * 网络连接异常
  * Created by Lidong on 2017/12/6.
@@ -37,6 +39,14 @@ public class NetException extends Exception {
             return super.getMessage();
         } else {
             return mException.getMessage();
+        }
+    }
+
+    private String getExceptionMessage(Exception e) {
+        if (e instanceof UnknownHostException) {
+            return "访问服务器失败，请检查网络连接。";
+        } else {
+            return e.getMessage();
         }
     }
 }

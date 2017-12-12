@@ -11,21 +11,13 @@ public interface NetRequest {
 
     void setUrl(String url);
 
-    String getUrl();
-
-    void setHeaders(Map<String, String> headers);
-
-    Map<String, String> getHeaders();
-
-    NetResponse get() throws NetException;
+    void setRequestHeaders(Map<String, String> headers);
 
     NetResponse get(Map<String, String> params) throws NetException;
 
     NetResponse post(String params) throws NetException;
 
     NetResponse form(Map<String, String> fields, Map<String, File> files) throws NetException;
-
-    void get(NetRequestListener listener);
 
     void get(Map<String, String> params, NetRequestListener listener);
 
