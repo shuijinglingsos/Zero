@@ -54,7 +54,7 @@ public class NetRequestActivity extends AppBaseActivity {
                 try {
                     NetRequest request = new DefaultNetRequest();
                     request.setUrl(getUrl());
-                    NetResponse response = request.get();
+                    NetResponse response = request.get(null);
                     String result = new String(response.getResponseContent());
                     showResult(result);
                 } catch (NetException e) {
@@ -68,7 +68,7 @@ public class NetRequestActivity extends AppBaseActivity {
     public void onGetAsyn(View view) {
         NetRequest request = new DefaultNetRequest();
         request.setUrl(getUrl());
-        request.get(new NetRequestListener() {
+        request.get(null, new NetRequestListener() {
             @Override
             public void onSuccess(NetResponse response) {
                 String result = new String(response.getResponseContent());
