@@ -6,8 +6,6 @@
     android:orientation="vertical"
     tools:context="com.elf.zerodemo.activity.AboutActivity">
 
-    <include layout="@layout/widget_toolbar" />
-
     <ImageView
         android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
