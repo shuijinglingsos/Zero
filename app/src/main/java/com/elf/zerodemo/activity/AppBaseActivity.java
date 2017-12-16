@@ -12,7 +12,9 @@ public class AppBaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setTitle(getIntent().getStringExtra(ARG_TITLE));
+        if (getIntent().hasExtra(ARG_TITLE)) {
+            setTitle(getIntent().getStringExtra(ARG_TITLE));
+        }
     }
 
     protected void showToast(String msg) {
