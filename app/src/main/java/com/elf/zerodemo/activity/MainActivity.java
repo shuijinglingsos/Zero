@@ -18,7 +18,7 @@ import com.elf.zerodemo.R;
  * Created by Lidong on 2017/11/15.
  */
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppBaseActivity {
 
     private String[] names = {
             "NetRequest",
