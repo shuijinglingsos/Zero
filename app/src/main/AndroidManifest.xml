@@ -14,8 +14,8 @@
 
         <activity
             android:name=".activity.SplashActivity"
-            android:theme="@style/AppTheme.Main.Splash"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.Main.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,6 +32,9 @@
         <activity android:name=".activity.AboutActivity" />
         <activity android:name=".activity.NetworkUtilsActivity" />
         <activity android:name=".activity.NetRequestActivity" />
+        <activity
+            android:name=".activity.TranslucentStatusActivity"
+            android:theme="@style/AppTheme.Main.TranslucentStatus" />
     </application>
 
 </manifest>
