@@ -28,6 +28,7 @@ public class MainActivity extends AppBaseActivity {
             "DeviceUtils",
             "NetworkUtils",
             "TranslucentStatus",
+            "FlowLayout",
             "About"
     };
 
@@ -40,6 +41,7 @@ public class MainActivity extends AppBaseActivity {
             DeviceUtilsActivity.class,
             NetworkUtilsActivity.class,
             TranslucentStatusActivity.class,
+            FlowLayoutActivity.class,
             AboutActivity.class
     };
 
