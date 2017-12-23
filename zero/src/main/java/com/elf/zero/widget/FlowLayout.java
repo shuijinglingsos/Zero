@@ -2,14 +2,8 @@ package com.elf.zero.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.elf.zero.utils.LogUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 流式布局
@@ -17,10 +11,8 @@ import java.util.List;
  */
 public class FlowLayout extends ViewGroup {
 
-    private final static String TAG=FlowLayout.class.getSimpleName();
-    private final int lineSpacing=20;
-
-    private List<FlowRow> mFlowRows = new ArrayList<>();
+    private final static String TAG = FlowLayout.class.getSimpleName();
+    private final int lineSpacing = 20;
 
     public FlowLayout(Context context) {
         this(context, null);
@@ -52,12 +44,13 @@ public class FlowLayout extends ViewGroup {
             if (child.getVisibility() == GONE) {
                 continue;
             }
-            measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, lineY);
-            MarginLayoutParams mlp = (MarginLayoutParams) child.getLayoutParams();
+//            measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
+//            MarginLayoutParams mlp = (MarginLayoutParams) child.getLayoutParams();
+            measureChild(child, widthMeasureSpec, heightMeasureSpec);
             int childWidth = child.getMeasuredWidth();
             int childHeight = child.getMeasuredHeight();
-            int spaceWidth = mlp.leftMargin + childWidth + mlp.rightMargin;
-            int spaceHeight = mlp.topMargin + childHeight + mlp.bottomMargin;
+            int spaceWidth = childWidth;  // mlp.leftMargin + childWidth + mlp.rightMargin;
+            int spaceHeight = childHeight;  // mlp.topMargin + childHeight + mlp.bottomMargin;
             if (lineUsed + spaceWidth > widthSize) {
                 //approach the limit of width and move to next line
                 lineY += lineHeight + lineSpacing;
@@ -93,11 +86,11 @@ public class FlowLayout extends ViewGroup {
             if (child.getVisibility() == GONE) {
                 continue;
             }
-            MarginLayoutParams mlp = (MarginLayoutParams) child.getLayoutParams();
+//            MarginLayoutParams mlp = (MarginLayoutParams) child.getLayoutParams();
             int childWidth = child.getMeasuredWidth();
             int childHeight = child.getMeasuredHeight();
-            int spaceWidth = mlp.leftMargin + childWidth + mlp.rightMargin;
-            int spaceHeight = mlp.topMargin + childHeight + mlp.bottomMargin;
+            int spaceWidth = childWidth; // mlp.leftMargin + childWidth + mlp.rightMargin;
+            int spaceHeight = childHeight;  // mlp.topMargin + childHeight + mlp.bottomMargin;
             if (lineUsed + spaceWidth > lineWidth) {
                 //approach the limit of width and move to next line
                 lineY += lineHeight + lineSpacing;
@@ -105,7 +98,8 @@ public class FlowLayout extends ViewGroup {
                 lineX = mPaddingLeft;
                 lineHeight = 0;
             }
-            child.layout(lineX + mlp.leftMargin, lineY + mlp.topMargin, lineX + mlp.leftMargin + childWidth, lineY + mlp.topMargin + childHeight);
+//            child.layout(lineX + mlp.leftMargin, lineY + mlp.topMargin, lineX + mlp.leftMargin + childWidth, lineY + mlp.topMargin + childHeight);
+            child.layout(lineX, lineY, lineX + childWidth, lineY + childHeight);
             if (spaceHeight > lineHeight) {
                 lineHeight = spaceHeight;
             }
@@ -115,35 +109,13 @@ public class FlowLayout extends ViewGroup {
         }
     }
 
-    @Override
-    protected LayoutParams generateLayoutParams(LayoutParams p) {
-        return new MarginLayoutParams(p);
-    }
-
-    @Override
-    public LayoutParams generateLayoutParams(AttributeSet attrs) {
-        return new MarginLayoutParams(getContext(), attrs);
-    }
-
-    private class FlowRow {
-        public List<View> flowItem = new ArrayList<>();
-
-        public int getWidth() {
-            int max = 0;
-            for (View view : flowItem) {
-                max += view.getMeasuredWidth();
-            }
-            return max;
-        }
-
-        public int getHeight() {
-            int max = 0;
-            for (View view : flowItem) {
-                if (max < view.getMeasuredHeight()) {
-                    max = view.getMeasuredHeight();
-                }
-            }
-            return max;
-        }
-    }
+//    @Override
+//    protected LayoutParams generateLayoutParams(LayoutParams p) {
+//        return new MarginLayoutParams(p);
+//    }
+//
+//    @Override
+//    public LayoutParams generateLayoutParams(AttributeSet attrs) {
+//        return new MarginLayoutParams(getContext(), attrs);
+//    }
 }
