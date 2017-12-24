@@ -11,12 +11,10 @@ import android.widget.ListView;
 import com.elf.zero.Zero;
 import com.elf.zerodemo.R;
 
-
 /**
  * 主页
  * Created by Lidong on 2017/11/15.
  */
-
 public class MainActivity extends AppBaseActivity {
 
     private String[] names = {
@@ -29,6 +27,7 @@ public class MainActivity extends AppBaseActivity {
             "NetworkUtils",
             "TranslucentStatus",
             "FlowLayout",
+            "PullRefreshLayout",
             "About"
     };
 
@@ -42,6 +41,7 @@ public class MainActivity extends AppBaseActivity {
             NetworkUtilsActivity.class,
             TranslucentStatusActivity.class,
             FlowLayoutActivity.class,
+            PullRefreshLayoutActivity.class,
             AboutActivity.class
     };
 
