@@ -25,21 +25,18 @@
 
             <ListView
                 android:visibility="visible"
-                android:background="@color/colorAccent"
                 android:id="@+id/listView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-
         </FrameLayout>
-
 
     </com.elf.zero.widget.PullRefreshLayout>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="STOP_REFRESH"
-        android:onClick="onStopRefresh"/>
+    <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="STOP_REFRESH"-->
+        <!--android:onClick="onStopRefresh"/>-->
 
 </LinearLayout>

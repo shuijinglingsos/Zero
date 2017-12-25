@@ -32,6 +32,13 @@ public class PullRefreshLayoutActivity extends AppBaseActivity {
                 showToast(position + "");
             }
         });
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                showToast(position + ",long");
+                return true;
+            }
+        });
         mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -48,12 +55,11 @@ public class PullRefreshLayoutActivity extends AppBaseActivity {
         mPullRefreshLayout.setPullRefreshInterface(new PullRefreshLayout.PullRefreshInterface() {
             @Override
             public boolean isCanPull() {
-//                if(mListView.getFirstVisiblePosition() !=0){
-//                    return false;
-//                }
+                if(mListView.getFirstVisiblePosition() !=0){
+                    return false;
+                }
 
-                return mListView.getFirstVisiblePosition() !=0
-                        && mListView.getChildCount() > 0 ? mListView.getChildAt(0).getTop() == 0 : true;
+                return mListView.getChildCount() > 0 ? mListView.getChildAt(0).getTop() == 0 : true;
             }
 
             @Override
@@ -77,9 +83,8 @@ public class PullRefreshLayoutActivity extends AppBaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        showData(50);
-//                        mArrayAdapter.notifyDataSetChanged();
                         mPullRefreshLayout.stopRefresh();
+                        showData(50);
                     }
                 });
             }
