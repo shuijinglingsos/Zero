@@ -2,7 +2,6 @@ package com.elf.zero.net;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 默认的网络连接
@@ -24,7 +23,7 @@ public abstract class AbstractNetRequest implements NetRequest {
 
     @Override
     public void setRequestHeader(String key, String value) {
-        mHeaders.add(new KeyValuePair<String>(key, value));
+        mHeaders.add(new KeyValuePair<>(key, value));
     }
 
     @Override
