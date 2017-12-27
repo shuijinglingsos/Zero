@@ -1,7 +1,7 @@
 package com.elf.zero.net;
 
 import java.io.File;
-import java.util.Map;
+import java.util.List;
 
 /**
  * 下载监听（此类内的回调方法都是在异步线程）
@@ -13,5 +13,5 @@ public interface NetDownloadListener {
 
     void onFailure(NetException exception);
 
-    void onSuccess(File file, Map<String, String> headers);
+    void onSuccess(File file, List<KeyValuePair<String>> headers);
 }

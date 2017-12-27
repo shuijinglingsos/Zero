@@ -1,6 +1,7 @@
 package com.elf.zero.net;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,5 +16,5 @@ public interface NetResponse {
 
     String getResponseMessage();
 
-    Map<String, String> getHeader();
+    List<KeyValuePair<String>> getHeader();
 }

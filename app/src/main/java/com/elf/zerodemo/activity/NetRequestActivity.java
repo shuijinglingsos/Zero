@@ -6,6 +6,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.elf.zero.net.DefaultNetRequest;
+import com.elf.zero.net.KeyValuePair;
 import com.elf.zero.net.NetDownloadListener;
 import com.elf.zero.net.NetException;
 import com.elf.zero.net.NetRequest;
@@ -14,6 +15,7 @@ import com.elf.zero.net.NetResponse;
 import com.elf.zerodemo.R;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -136,10 +138,10 @@ public class NetRequestActivity extends AppBaseActivity {
             }
 
             @Override
-            public void onSuccess(File file, Map<String, String> headers) {
+            public void onSuccess(File file, List<KeyValuePair<String>> headers) {
                 StringBuilder sb = new StringBuilder();
-                for (String key : headers.keySet()) {
-                    sb.append("\n").append(key).append("=").append(headers.get(key));
+                for (KeyValuePair<String> loop : headers) {
+                    sb.append("\n").append(loop.getKey()).append("=").append(loop.getValue());
                 }
 
                 showResult("success：" + file.getPath() + sb.toString());

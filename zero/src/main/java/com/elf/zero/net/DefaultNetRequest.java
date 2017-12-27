@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -69,11 +69,11 @@ public class DefaultNetRequest extends AbstractNetRequest {
                 byte[] result = StreamUtils.streamToByteArray(is);
                 is.close();
 
-                Map<String, String> responseHeader = new HashMap<>();
+                List<KeyValuePair<String>> responseHeader = new ArrayList<>();
                 Header[] map = response.getAllHeaders();
                 if (map != null && map.length > 0) {
                     for (Header header : map) {
-                        responseHeader.put(header.getName(), header.getValue());
+                        responseHeader.add(new KeyValuePair<>(header.getName(), header.getValue()));
                     }
                 }
 
@@ -178,11 +178,11 @@ public class DefaultNetRequest extends AbstractNetRequest {
                 is.close();
                 fos.close();
 
-                Map<String, String> responseHeader = new HashMap<>();
+                List<KeyValuePair<String>> responseHeader = new ArrayList<>();
                 Map<String, List<String>> map = mHttpURLConnection.getHeaderFields();
                 if (map != null && !map.isEmpty()) {
                     for (String key : map.keySet()) {
-                        responseHeader.put(key, map.get(key).get(0));
+                        responseHeader.add(new KeyValuePair<>(key, map.get(key).get(0)));
                     }
                 }
 
@@ -236,11 +236,11 @@ public class DefaultNetRequest extends AbstractNetRequest {
                         is.close();
                         fos.close();
 
-                        Map<String, String> responseHeader = new HashMap<>();
+                        List<KeyValuePair<String>> responseHeader = new ArrayList<>();
                         Map<String, List<String>> map = mHttpURLConnection.getHeaderFields();
                         if (map != null && !map.isEmpty()) {
                             for (String key : map.keySet()) {
-                                responseHeader.put(key, map.get(key).get(0));
+                                responseHeader.add(new KeyValuePair<>(key, map.get(key).get(0)));
                             }
                         }
 
@@ -318,11 +318,11 @@ public class DefaultNetRequest extends AbstractNetRequest {
                 byte[] result = StreamUtils.streamToByteArray(is);
                 is.close();
 
-                Map<String, String> responseHeader = new HashMap<>();
+                List<KeyValuePair<String>> responseHeader = new ArrayList<>();
                 Map<String, List<String>> map = mHttpURLConnection.getHeaderFields();
                 if (map != null && !map.isEmpty()) {
                     for (String key : map.keySet()) {
-                        responseHeader.put(key, map.get(key).get(0));
+                        responseHeader.add(new KeyValuePair<>(key, map.get(key).get(0)));
                     }
                 }
 

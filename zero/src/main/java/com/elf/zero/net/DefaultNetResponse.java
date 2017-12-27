@@ -1,5 +1,6 @@
 package com.elf.zero.net;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,9 +12,9 @@ public class DefaultNetResponse implements NetResponse {
     private int mResponseCode;
     private String mResponseMessage;
     private byte[] mResponseContent;
-    private Map<String, String> mHeaders;
+    private List<KeyValuePair<String>> mHeaders;
 
-    public DefaultNetResponse(int code, String message, byte[] content, Map<String, String> headers) {
+    public DefaultNetResponse(int code, String message, byte[] content, List<KeyValuePair<String>> headers) {
         mResponseCode = code;
         mResponseMessage = message;
         mResponseContent = content;
@@ -36,7 +37,7 @@ public class DefaultNetResponse implements NetResponse {
     }
 
     @Override
-    public Map<String, String> getHeader() {
+    public List<KeyValuePair<String>> getHeader() {
         return mHeaders;
     }
 }
