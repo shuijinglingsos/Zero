@@ -1,8 +1,6 @@
 package com.elf.zero.net;
 
-import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 网络连接 响应内容
