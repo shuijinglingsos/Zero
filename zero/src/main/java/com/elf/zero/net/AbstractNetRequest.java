@@ -1,6 +1,7 @@
 package com.elf.zero.net;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,7 +15,7 @@ public abstract class AbstractNetRequest implements NetRequest {
 
     private boolean mCancel;
     private String mUrl;
-    private Map<String, String> mHeaders = new HashMap<>();
+    private List<KeyValuePair<String>> mHeaders = new ArrayList<>();
 
     @Override
     public void setUrl(String url) {
@@ -22,8 +23,8 @@ public abstract class AbstractNetRequest implements NetRequest {
     }
 
     @Override
-    public void setRequestHeaders(Map<String, String> headers) {
-        mHeaders = headers;
+    public void setRequestHeader(String key, String value) {
+        mHeaders.add(new KeyValuePair<String>(key, value));
     }
 
     @Override
@@ -37,7 +38,7 @@ public abstract class AbstractNetRequest implements NetRequest {
     }
 
     @Override
-    public NetResponse get(Map<String, String> params) throws NetException {
+    public NetResponse get(List<KeyValuePair<String>> params) throws NetException {
         return request(getUrl(), METHOD_GET, params, null);
     }
 
@@ -47,7 +48,7 @@ public abstract class AbstractNetRequest implements NetRequest {
     }
 
     @Override
-    public void get(final Map<String, String> params, final NetRequestListener listener) {
+    public void get(List<KeyValuePair<String>> params, NetRequestListener listener) {
         request(getUrl(), METHOD_GET, params, null, listener);
     }
 
@@ -60,13 +61,15 @@ public abstract class AbstractNetRequest implements NetRequest {
         return mUrl;
     }
 
-    protected Map<String, String> getHeaders() {
+    protected List<KeyValuePair<String>> getHeaders() {
         return mHeaders;
     }
 
-    protected abstract NetResponse request(String url, String method, Map<String, String> getParams, String postParams) throws NetException;
+    protected abstract NetResponse request(String url, String method, List<KeyValuePair<String>> getParams,
+                                           String postParams) throws NetException;
 
-    protected abstract void request(final String url, final String method, final Map<String, String> getParams, final String postParams, final NetRequestListener listener);
+    protected abstract void request(String url, String method, List<KeyValuePair<String>> getParams,
+                                    String postParams, NetRequestListener listener);
 
     /**
      * 追加参数
@@ -75,7 +78,7 @@ public abstract class AbstractNetRequest implements NetRequest {
      * @param params 参数集合
      * @return 返回追加参数后的url
      */
-    protected String appendParams(String url, Map<String, String> params) {
+    protected String appendParams(String url, List<KeyValuePair<String>> params) {
         if (params != null && !params.isEmpty()) {
             if (url.contains("?")) {
                 if (!url.endsWith("?")) {  //最后一位是问号
@@ -86,11 +89,11 @@ public abstract class AbstractNetRequest implements NetRequest {
             }
 
             int i = 0;
-            for (String key : params.keySet()) {
+            for (KeyValuePair<String> loop : params) {
                 if (i > 0) {
                     url += "&";
                 }
-                url = url + key + "=" + params.get(key);
+                url = url + loop.getKey() + "=" + loop.getValue();
                 i++;
             }
         }

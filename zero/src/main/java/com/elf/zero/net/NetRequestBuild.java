@@ -53,26 +53,26 @@ public class NetRequestBuild {
         return this;
     }
 
-    public NetResponse request() throws NetException {
-        mNetRequest.setUrl(mUrl);
-        mNetRequest.setRequestHeaders(mHeader);
-        if (GET_MEHTOD == mMethod) {
-            return mNetRequest.get(mGetParams);
-        } else if (POST_METHOD == mMethod) {
-            return mNetRequest.post(mPostParams);
-        } else {
-            throw new NetException(-1, "未知的请求方法");
-        }
-    }
-
-    public NetRequest request(NetRequestListener listener) {
-        mNetRequest.setUrl(mUrl);
-        mNetRequest.setRequestHeaders(mHeader);
-        if (GET_MEHTOD == mMethod) {
-            mNetRequest.get(mGetParams, listener);
-        } else if (POST_METHOD == mMethod) {
-            mNetRequest.post(mPostParams, listener);
-        }
-        return mNetRequest;
-    }
+//    public NetResponse request() throws NetException {
+//        mNetRequest.setUrl(mUrl);
+//        mNetRequest.setRequestHeaders(mHeader);
+//        if (GET_MEHTOD == mMethod) {
+//            return mNetRequest.get(mGetParams);
+//        } else if (POST_METHOD == mMethod) {
+//            return mNetRequest.post(mPostParams);
+//        } else {
+//            throw new NetException(-1, "未知的请求方法");
+//        }
+//    }
+//
+//    public NetRequest request(NetRequestListener listener) {
+//        mNetRequest.setUrl(mUrl);
+//        mNetRequest.setRequestHeaders(mHeader);
+//        if (GET_MEHTOD == mMethod) {
+//            mNetRequest.get(mGetParams, listener);
+//        } else if (POST_METHOD == mMethod) {
+//            mNetRequest.post(mPostParams, listener);
+//        }
+//        return mNetRequest;
+//    }
 }
