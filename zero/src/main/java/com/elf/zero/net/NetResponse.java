@@ -1,7 +1,6 @@
 package com.elf.zero.net;
 
-import java.io.InputStream;
-import java.util.Map;
+import java.util.List;
 
 /**
  * 网络连接 响应内容
@@ -15,5 +14,5 @@ public interface NetResponse {
 
     String getResponseMessage();
 
-    Map<String, String> getHeader();
+    List<KeyValuePair<String>> getHeader();
 }

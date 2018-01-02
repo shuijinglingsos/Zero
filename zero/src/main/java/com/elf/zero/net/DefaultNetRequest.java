@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -37,25 +37,29 @@ public class DefaultNetRequest extends AbstractNetRequest {
 
     @SuppressWarnings("deprecation")
     @Override
-    public NetResponse form(Map<String, String> fields, Map<String, File> files) throws NetException {
+    public NetResponse form(List<KeyValuePair<String>> fields, List<KeyValuePair<File>> files) throws NetException {
 
         try {
             MultipartEntity multipartEntity = new MultipartEntity();
-            for (String key : fields.keySet()) {
-                multipartEntity.addPart(key, new StringBody(fields.get(key)));
+            if(fields!=null && !fields.isEmpty()) {
+                for (KeyValuePair<String> loop : fields) {
+                    multipartEntity.addPart(loop.getKey(), new StringBody(loop.getValue()));
+                }
             }
-            for (String key : files.keySet()) {
-                multipartEntity.addPart(key, new FileBody(files.get(key)));
+            if(files!=null && !files.isEmpty()) {
+                for (KeyValuePair<File> loop : files) {
+                    multipartEntity.addPart(loop.getKey(), new FileBody(loop.getValue()));
+                }
             }
             // 请求
             HttpClient httpClient = new DefaultHttpClient();
             HttpPost post = new HttpPost(getUrl());
             post.setEntity(multipartEntity);
 
-            Map<String, String> requestHeaders = getHeaders();
+            List<KeyValuePair<String>> requestHeaders = getHeaders();
             if (requestHeaders != null && !requestHeaders.isEmpty()) {
-                for (String key : requestHeaders.keySet()) {
-                    post.addHeader(key, requestHeaders.get(key));
+                for (KeyValuePair<String> loop : requestHeaders) {
+                    post.addHeader(loop.getKey(), loop.getValue());
                 }
             }
             HttpResponse response = httpClient.execute(post);
@@ -65,11 +69,11 @@ public class DefaultNetRequest extends AbstractNetRequest {
                 byte[] result = StreamUtils.streamToByteArray(is);
                 is.close();
 
-                Map<String, String> responseHeader = new HashMap<>();
+                List<KeyValuePair<String>> responseHeader = new ArrayList<>();
                 Header[] map = response.getAllHeaders();
                 if (map != null && map.length > 0) {
                     for (Header header : map) {
-                        responseHeader.put(header.getName(), header.getValue());
+                        responseHeader.add(new KeyValuePair<>(header.getName(), header.getValue()));
                     }
                 }
 
@@ -122,7 +126,8 @@ public class DefaultNetRequest extends AbstractNetRequest {
     }
 
     @Override
-    public void form(final Map<String, String> fields, final Map<String, File> files, final NetRequestListener listener) {
+    public void form(final List<KeyValuePair<String>> fields, final List<KeyValuePair<File>> files,
+                     final NetRequestListener listener) {
         new Thread() {
             @Override
             public void run() {
@@ -148,6 +153,55 @@ public class DefaultNetRequest extends AbstractNetRequest {
     }
 
     @Override
+    public NetResponse download(File saveFile) throws NetException {
+        try {
+            mHttpURLConnection = (HttpURLConnection) new URL(getUrl()).openConnection();
+            mHttpURLConnection.setRequestMethod(METHOD_GET);
+
+            List<KeyValuePair<String>> requestHeaders = getHeaders();
+            if (requestHeaders != null && !requestHeaders.isEmpty()) {
+                for (KeyValuePair<String> loop : requestHeaders) {
+                    mHttpURLConnection.setRequestProperty(loop.getKey(), loop.getValue());
+                }
+            }
+
+            int responseCode = mHttpURLConnection.getResponseCode();
+            if (responseCode == 200) {
+                InputStream is = mHttpURLConnection.getInputStream();
+
+                FileOutputStream fos = new FileOutputStream(saveFile);
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = is.read(buffer)) != -1) {
+                    fos.write(buffer, 0, len);
+                }
+                is.close();
+                fos.close();
+
+                List<KeyValuePair<String>> responseHeader = new ArrayList<>();
+                Map<String, List<String>> map = mHttpURLConnection.getHeaderFields();
+                if (map != null && !map.isEmpty()) {
+                    for (String key : map.keySet()) {
+                        responseHeader.add(new KeyValuePair<>(key, map.get(key).get(0)));
+                    }
+                }
+
+                return new DefaultNetResponse(
+                        mHttpURLConnection.getResponseCode(),
+                        mHttpURLConnection.getResponseMessage(),
+                        null,
+                        responseHeader);
+
+            } else {
+                throw new NetException(responseCode, mHttpURLConnection.getResponseMessage());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new NetException(-1, e);
+        }
+    }
+
+    @Override
     public void download(final File saveFile, final NetDownloadListener listener) {
         new Thread() {
             @Override
@@ -156,15 +210,14 @@ public class DefaultNetRequest extends AbstractNetRequest {
                     mHttpURLConnection = (HttpURLConnection) new URL(getUrl()).openConnection();
                     mHttpURLConnection.setRequestMethod(METHOD_GET);
 
-                    Map<String, String> requestHeaders = getHeaders();
+                    List<KeyValuePair<String>> requestHeaders = getHeaders();
                     if (requestHeaders != null && !requestHeaders.isEmpty()) {
-                        for (String key : requestHeaders.keySet()) {
-                            mHttpURLConnection.setRequestProperty(key, requestHeaders.get(key));
+                        for (KeyValuePair<String> loop : requestHeaders) {
+                            mHttpURLConnection.setRequestProperty(loop.getKey(), loop.getValue());
                         }
                     }
 
                     int responseCode = mHttpURLConnection.getResponseCode();
-
                     if (responseCode == 200) {
                         InputStream is = mHttpURLConnection.getInputStream();
 
@@ -183,11 +236,11 @@ public class DefaultNetRequest extends AbstractNetRequest {
                         is.close();
                         fos.close();
 
-                        Map<String, String> responseHeader = new HashMap<>();
+                        List<KeyValuePair<String>> responseHeader = new ArrayList<>();
                         Map<String, List<String>> map = mHttpURLConnection.getHeaderFields();
                         if (map != null && !map.isEmpty()) {
                             for (String key : map.keySet()) {
-                                responseHeader.put(key, map.get(key).get(0));
+                                responseHeader.add(new KeyValuePair<>(key, map.get(key).get(0)));
                             }
                         }
 
@@ -228,7 +281,7 @@ public class DefaultNetRequest extends AbstractNetRequest {
      * @return 网络响应
      * @throws NetException 异常
      */
-    protected NetResponse request(String url, String method, Map<String, String> getParams,
+    protected NetResponse request(String url, String method, List<KeyValuePair<String>> getParams,
                                   String postParams) throws NetException {
         try {
             if (METHOD_GET.equals(method)) {
@@ -244,10 +297,10 @@ public class DefaultNetRequest extends AbstractNetRequest {
 
             mHttpURLConnection.setRequestProperty("Content-Type", "application/text");
 
-            Map<String, String> requestHeaders = getHeaders();
+            List<KeyValuePair<String>> requestHeaders = getHeaders();
             if (requestHeaders != null && !requestHeaders.isEmpty()) {
-                for (String key : requestHeaders.keySet()) {
-                    mHttpURLConnection.setRequestProperty(key, requestHeaders.get(key));
+                for (KeyValuePair<String> loop : requestHeaders) {
+                    mHttpURLConnection.setRequestProperty(loop.getKey(), loop.getValue());
                 }
             }
 
@@ -265,11 +318,11 @@ public class DefaultNetRequest extends AbstractNetRequest {
                 byte[] result = StreamUtils.streamToByteArray(is);
                 is.close();
 
-                Map<String, String> responseHeader = new HashMap<>();
+                List<KeyValuePair<String>> responseHeader = new ArrayList<>();
                 Map<String, List<String>> map = mHttpURLConnection.getHeaderFields();
                 if (map != null && !map.isEmpty()) {
                     for (String key : map.keySet()) {
-                        responseHeader.put(key, map.get(key).get(0));
+                        responseHeader.add(new KeyValuePair<>(key, map.get(key).get(0)));
                     }
                 }
 
@@ -296,7 +349,8 @@ public class DefaultNetRequest extends AbstractNetRequest {
      * @param postParams post方法参数
      * @param listener   监听回调
      */
-    protected void request(final String url, final String method, final Map<String, String> getParams, final String postParams, final NetRequestListener listener) {
+    protected void request(final String url, final String method, final List<KeyValuePair<String>> getParams,
+                           final String postParams, final NetRequestListener listener) {
         new Thread() {
             @Override
             public void run() {

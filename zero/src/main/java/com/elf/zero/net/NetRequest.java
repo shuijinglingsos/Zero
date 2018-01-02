@@ -1,7 +1,7 @@
 package com.elf.zero.net;
 
 import java.io.File;
-import java.util.Map;
+import java.util.List;
 
 /**
  * 网络连接
@@ -11,19 +11,21 @@ public interface NetRequest {
 
     void setUrl(String url);
 
-    void setRequestHeaders(Map<String, String> headers);
+    void setRequestHeader(String key,String value);
 
-    NetResponse get(Map<String, String> params) throws NetException;
+    NetResponse get(List<KeyValuePair<String>> params) throws NetException;
 
     NetResponse post(String params) throws NetException;
 
-    NetResponse form(Map<String, String> fields, Map<String, File> files) throws NetException;
+    NetResponse form(List<KeyValuePair<String>> fields, List<KeyValuePair<File>> files) throws NetException;
 
-    void get(Map<String, String> params, NetRequestListener listener);
+    NetResponse download(File saveFile) throws NetException;
+
+    void get(List<KeyValuePair<String>> params, NetRequestListener listener);
 
     void post(String params, NetRequestListener listener);
 
-    void form(Map<String, String> fields, Map<String, File> files, NetRequestListener listener);
+    void form(List<KeyValuePair<String>> fields, List<KeyValuePair<File>> files, NetRequestListener listener);
 
     void download(File saveFile, NetDownloadListener listener);
 
