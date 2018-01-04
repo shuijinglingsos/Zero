@@ -16,7 +16,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.elf.zerodemo.R;
@@ -33,12 +35,13 @@ import java.util.Set;
 /**
  * 图片选择
  */
-public class ImageSelectActivity extends AppCompatActivity {
+public class ImageSelectActivity extends AppBaseActivity {
 
+    private TextView mTxtDir;
     private AbsListView mGridView;
     private ImageGridAdapter mImageGridAdapter;
-    List<ImageDetail> mImageList=new ArrayList<>();
-    Map<String,List<ImageDetail>> mImageDir=new HashMap<>();
+    private List<ImageDetail> mImageList=new ArrayList<>();
+    private Map<String,List<ImageDetail>> mImageDir=new HashMap<>();
 
 
     @Override
@@ -46,6 +49,7 @@ public class ImageSelectActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_select);
         mGridView = (AbsListView) findViewById(R.id.gridView);
+        mTxtDir = (TextView) findViewById(R.id.tv_dir);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -55,6 +59,13 @@ public class ImageSelectActivity extends AppCompatActivity {
         }
 
         showData();
+
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                showToast(mImageGridAdapter.getItem(position).path);
+            }
+        });
     }
 
     private void showData(){
@@ -70,7 +81,7 @@ public class ImageSelectActivity extends AppCompatActivity {
                 IMAGES,
                 null,
                 null,
-                MediaStore.Images.Media.DATE_ADDED);
+                MediaStore.Images.Media.DATE_ADDED+" desc");
 
         if (cursor != null) {
             while (cursor.moveToNext()) {
@@ -130,7 +141,7 @@ public class ImageSelectActivity extends AppCompatActivity {
         final String[] array = new String[dirs.size()];
         int i = 0;
         for (String loop : dirs) {
-            array[i] = loop;
+            array[i] = loop;  //+"("+mImageDir.get(loop).size()+")";
             i++;
         }
 

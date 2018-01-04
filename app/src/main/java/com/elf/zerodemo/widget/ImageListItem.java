@@ -6,9 +6,12 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.elf.zero.widget.AbsLinearLayout;
 import com.elf.zerodemo.R;
 import com.elf.zerodemo.model.ImageDetail;
@@ -22,6 +25,7 @@ import java.io.File;
 public class ImageListItem extends AbsLinearLayout {
 
     private ImageView mImageView;
+    private TextView mTextView;
 
     public ImageListItem(Context context) {
         super(context);
@@ -39,12 +43,27 @@ public class ImageListItem extends AbsLinearLayout {
     @Override
     protected void initView(AttributeSet attrs) {
         mImageView = getViewById(R.id.imageView);
+        mTextView = getViewById(R.id.textView);
+
+        int width = (1080-12) / 3;
+
+        setLayoutParams(new ViewGroup.LayoutParams(width, width));
     }
 
     public void setData(ImageDetail data) {
 
-        Glide.with(getContext()).load(data.path).centerCrop()
-                .placeholder(R.mipmap.ic_launcher).into(mImageView);
+        if(data.name.endsWith("gif")) {
+            mTextView.setText("动图");
+            mTextView.setVisibility(VISIBLE);
+            Glide.with(getContext()).load(data.path).asBitmap().centerCrop().skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(mImageView);
+        }else{
+            Glide.with(getContext()).load(data.path).centerCrop().skipMemoryCache(true)
+//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(mImageView);
+            mTextView.setVisibility(GONE);
+        }
 
 //        if(TextUtils.isEmpty(data.fmPaht)) {
 //            Cursor cursor1 = getContext().getContentResolver().query(MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI
