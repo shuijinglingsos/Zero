@@ -7,16 +7,19 @@
     android:orientation="vertical"
     tools:context="com.elf.zerodemo.activity.ImageSelectActivity">
 
-    <ListView
+    <GridView
         android:id="@+id/gridView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:numColumns="3"
         android:layout_weight="1" />
 
     <LinearLayout
+        android:id="@+id/ll_bottom"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:background="#aa000000"
+        android:onClick="onClickBottom"
         android:gravity="center_vertical"
         android:orientation="vertical">
 

@@ -3,31 +3,32 @@ package com.elf.zerodemo.activity;
 import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.provider.MediaStore;
-import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
-import android.widget.GridView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.elf.zerodemo.R;
 import com.elf.zerodemo.model.ImageDetail;
+import com.elf.zerodemo.widget.ImageListItem;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 图片选择
@@ -35,6 +36,10 @@ import java.util.Map;
 public class ImageSelectActivity extends AppCompatActivity {
 
     private AbsListView mGridView;
+    private ImageGridAdapter mImageGridAdapter;
+    List<ImageDetail> mImageList=new ArrayList<>();
+    Map<String,List<ImageDetail>> mImageDir=new HashMap<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +64,6 @@ public class ImageSelectActivity extends AppCompatActivity {
             Toast.makeText(this,"没有权限",Toast.LENGTH_SHORT).show();
             return;
         }
-
-        List<ImageDetail> list = new ArrayList<>();
 
         ContentResolver contentResolver = getContentResolver();
         Cursor cursor = contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -90,24 +93,57 @@ public class ImageSelectActivity extends AppCompatActivity {
                 imageDetail.size = cursor.getLong(cursor.getColumnIndex(IMAGES[10]));
                 imageDetail.id = cursor.getLong(cursor.getColumnIndex(IMAGES[11]));
 
-                Cursor cursor1 = getContentResolver().query(MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI
-                        , null
-                        , MediaStore.Images.Thumbnails.IMAGE_ID + "=?"
-                        , new String[]{imageDetail.id + ""}
-                        , null);
+//                Cursor cursor1 = getContentResolver().query(MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI
+//                        , new String[]{
+//                                MediaStore.Images.Thumbnails.IMAGE_ID,
+//                                MediaStore.Images.Thumbnails.DATA
+//                        }
+//                        , MediaStore.Images.Thumbnails.IMAGE_ID + "=?"
+//                        , new String[]{imageDetail.id + ""}
+//                        , null);
+//
+//                if (cursor1 != null && cursor1.moveToFirst()) {
+//                    imageDetail.fmPaht = cursor1.getString(1);
+//                }
 
-                if (cursor1 != null && cursor1.moveToFirst()) {
-                    imageDetail.fmPaht = cursor1.getString(cursor.getColumnIndex(MediaStore.Images.Thumbnails.DATA));
+                mImageList.add(imageDetail);
+
+                List<ImageDetail> dir = mImageDir.get(imageDetail.bucketName);
+                if (dir == null) {
+                    List<ImageDetail> temp = new ArrayList<>();
+                    temp.add(imageDetail);
+                    mImageDir.put(imageDetail.bucketName, temp);
+                } else {
+                    dir.add(imageDetail);
                 }
-
-                list.add(imageDetail);
             }
             cursor.close();
         }
 
-        ImageGridAdapter adapter = new ImageGridAdapter(this);
-        adapter.addAll(list);
-        mGridView.setAdapter(adapter);
+        mImageGridAdapter = new ImageGridAdapter(this);
+        mImageGridAdapter.addAll(mImageList);
+        mGridView.setAdapter(mImageGridAdapter);
+    }
+
+    public void onClickBottom(View view) {
+        Set<String> dirs = mImageDir.keySet();
+        final String[] array = new String[dirs.size()];
+        int i = 0;
+        for (String loop : dirs) {
+            array[i] = loop;
+            i++;
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("文件夹")
+                .setItems(array, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mImageGridAdapter.clear();
+                        mImageGridAdapter.addAll(mImageDir.get(array[which]));
+                    }
+                })
+                .show();
     }
 
     private class ImageGridAdapter extends ArrayAdapter<ImageDetail> {
@@ -120,21 +156,27 @@ public class ImageSelectActivity extends AppCompatActivity {
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
-            if (convertView == null) {
-                convertView = new TextView(getContext());
-            }
-            ImageDetail detail = getItem(position);
-            StringBuilder sb = new StringBuilder();
-            sb.append("id：" + detail.id).append("\n")
-                    .append("名称：" + detail.name).append("(").append(detail.mimeType).append(")").append("\n")
-                    .append("title：" + detail.title).append("\n")
-                    .append("添加时间：" + detail.addDate).append("\n")
-                    .append("修改时间：" + detail.modifyDate).append("\n")
-                    .append("文件夹:" + detail.bucketName).append("(").append(detail.bucketId).append(")").append("\n")
-                    .append("路径：").append(detail.path).append("\n")
-                    .append("封面：").append(detail.fmPaht);
+//            if (convertView == null) {
+//                convertView = new TextView(getContext());
+//            }
+//            ImageDetail detail = getItem(position);
+//            StringBuilder sb = new StringBuilder();
+//            sb.append("id：" + detail.id).append("\n")
+//                    .append("名称：" + detail.name).append("(").append(detail.mimeType).append(")").append("\n")
+//                    .append("title：" + detail.title).append("\n")
+//                    .append("添加时间：" + detail.addDate).append("\n")
+//                    .append("修改时间：" + detail.modifyDate).append("\n")
+//                    .append("文件夹:" + detail.bucketName).append("(").append(detail.bucketId).append(")").append("\n")
+//                    .append("路径：").append(detail.path).append("\n")
+//                    .append("封面：").append(detail.fmPaht);
+//
+//            ((TextView) convertView).setText(sb.toString());
 
-            ((TextView) convertView).setText(sb.toString());
+            if(convertView==null){
+                convertView=new ImageListItem(getContext());
+            }
+
+            ((ImageListItem)convertView).setData(getItem(position));
 
             return convertView;
         }
