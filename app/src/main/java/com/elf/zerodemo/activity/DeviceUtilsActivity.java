@@ -1,6 +1,7 @@
 package com.elf.zerodemo.activity;
 
 import android.Manifest;
+import android.bluetooth.BluetoothClass;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -45,6 +46,7 @@ public class DeviceUtilsActivity extends AppBaseActivity {
         sb.append("\n电话号码：").append(DeviceUtils.getTelephoneNumber());
         sb.append("\n运营商名称：").append(DeviceUtils.getNetworkOperatorName());
         sb.append("\n是否支持NFC：").append(DeviceUtils.isSupportNFC());
+        sb.append("\n分辨率：").append(DeviceUtils.getScreenWidth()).append("x").append(DeviceUtils.getScreenHeight());
 
         ((TextView) findViewById(R.id.textView)).setText(sb.toString());
     }

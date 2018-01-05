@@ -118,4 +118,22 @@ public class DeviceUtils {
     public static boolean isSupportNFC() {
         return NfcAdapter.getDefaultAdapter(mContext) != null;
     }
+
+    /**
+     * 获取屏幕宽度
+     *
+     * @return 屏幕宽度
+     */
+    public static int getScreenWidth() {
+        return mContext.getResources().getDisplayMetrics().widthPixels;
+    }
+
+    /**
+     * 获取屏幕高度
+     *
+     * @return 屏幕高度
+     */
+    public static int getScreenHeight() {
+        return mContext.getResources().getDisplayMetrics().heightPixels;
+    }
 }
