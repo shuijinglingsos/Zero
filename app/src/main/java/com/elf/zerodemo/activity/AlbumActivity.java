@@ -224,12 +224,12 @@ public class AlbumActivity extends AppBaseActivity {
             cursor.close();
         }
 
-//        Collections.sort(allAlbumFiles, new Comparator<AlbumFile>() {
-//            @Override
-//            public int compare(AlbumFile o1, AlbumFile o2) {
-//                return Long.valueOf(o2.addDate).compareTo(o1.addDate);  // o2.addDate > o1.addDate ? 1 : 0;
-//            }
-//        });
+        Collections.sort(allAlbumFiles, new Comparator<AlbumFile>() {
+            @Override
+            public int compare(AlbumFile o1, AlbumFile o2) {
+                return Long.valueOf(o2.addDate).compareTo(o1.addDate);  // o2.addDate > o1.addDate ? 1 : 0;
+            }
+        });
 
         AlbumFolder videoFolder = new AlbumFolder();
         videoFolder.id = 99998;
