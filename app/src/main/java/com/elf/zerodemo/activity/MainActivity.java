@@ -28,7 +28,7 @@ public class MainActivity extends AppBaseActivity {
             "TranslucentStatus",
             "FlowLayout",
             "PullRefreshLayout",
-            "ImageSelect",
+            "Album",
             "About"
     };
 
@@ -43,7 +43,7 @@ public class MainActivity extends AppBaseActivity {
             TranslucentStatusActivity.class,
             FlowLayoutActivity.class,
             PullRefreshLayoutActivity.class,
-            ImageSelectActivity.class,
+            AlbumActivity.class,
             AboutActivity.class
     };
 

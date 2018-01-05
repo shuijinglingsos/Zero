@@ -1,38 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.elf.zerodemo.activity.ImageSelectActivity">
+    tools:context="com.elf.zerodemo.activity.AlbumActivity">
 
     <GridView
-        android:background="#333333"
+        android:background="@color/album_list_background"
         android:id="@+id/gridView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:numColumns="3"
-        android:horizontalSpacing="2dp"
-        android:verticalSpacing="2dp"
+        android:horizontalSpacing="@dimen/album_file_list_space"
+        android:verticalSpacing="@dimen/album_file_list_space"
         android:layout_weight="1" />
 
     <LinearLayout
         android:id="@+id/ll_bottom"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:background="#333333"
+        android:layout_height="@dimen/album_bottom_height"
+        android:background="@color/album_bottom_background"
         android:onClick="onClickBottom"
         android:gravity="center_vertical"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/tv_dir"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="@dimen/album_bottom_marginLeft"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="文件夹"
-            android:textSize="20sp"
+            android:textSize="@dimen/album_bottom_textSize"
             android:textColor="#FFFFFF"/>
 
     </LinearLayout>

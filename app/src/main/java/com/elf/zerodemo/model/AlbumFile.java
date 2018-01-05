@@ -1,10 +1,10 @@
 package com.elf.zerodemo.model;
 
 /**
- * 图片详情
+ * 相册文件
  * Created by Lidong on 2018/1/3.
  */
-public class ImageDetail {
+public class AlbumFile {
 
     public long id;
     public String path;
@@ -18,5 +18,9 @@ public class ImageDetail {
     public float latitude;
     public float longitude;
     public long size;
-    public String fmPaht;
+
+    public long duration;
+    public int width;
+    public int height;
+
 }

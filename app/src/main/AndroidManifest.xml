@@ -37,7 +37,7 @@
             android:theme="@style/AppTheme.Main.TranslucentStatus" />
         <activity android:name=".activity.FlowLayoutActivity" />
         <activity android:name=".activity.PullRefreshLayoutActivity" />
-        <activity android:name=".activity.ImageSelectActivity" />
+        <activity android:name=".activity.AlbumActivity" />
     </application>
 
 </manifest>

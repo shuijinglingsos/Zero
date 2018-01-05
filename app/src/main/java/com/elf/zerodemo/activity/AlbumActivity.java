@@ -11,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,32 +21,30 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.elf.zerodemo.R;
-import com.elf.zerodemo.model.ImageDetail;
-import com.elf.zerodemo.widget.ImageListItem;
+import com.elf.zerodemo.model.AlbumFile;
+import com.elf.zerodemo.model.AlbumFolder;
+import com.elf.zerodemo.widget.AlbumFileItem;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 图片选择
  */
-public class ImageSelectActivity extends AppBaseActivity {
+public class AlbumActivity extends AppBaseActivity {
 
     private TextView mTxtDir;
     private AbsListView mGridView;
     private ImageGridAdapter mImageGridAdapter;
-    private List<ImageDetail> mImageList=new ArrayList<>();
-    private Map<String,List<ImageDetail>> mImageDir=new HashMap<>();
-
+    private List<AlbumFolder> mAlbumFolder=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_image_select);
+        setContentView(R.layout.activity_album);
         mGridView = (AbsListView) findViewById(R.id.gridView);
         mTxtDir = (TextView) findViewById(R.id.tv_dir);
 
@@ -68,11 +65,11 @@ public class ImageSelectActivity extends AppBaseActivity {
         });
     }
 
-    private void showData(){
+    private void showData() {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED){
-            Toast.makeText(this,"没有权限",Toast.LENGTH_SHORT).show();
+                != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "没有权限", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -81,67 +78,68 @@ public class ImageSelectActivity extends AppBaseActivity {
                 IMAGES,
                 null,
                 null,
-                MediaStore.Images.Media.DATE_ADDED+" desc");
+                MediaStore.Images.Media.DATE_ADDED + " desc");
 
         if (cursor != null) {
+            List<AlbumFile> albumFiles = new ArrayList<>();
+            Map<String, AlbumFolder> albumFolderMap = new HashMap<>();
+
             while (cursor.moveToNext()) {
                 String path = cursor.getString(cursor.getColumnIndex(IMAGES[0]));
 
                 File file = new File(path);
                 if (!file.exists() || !file.canRead()) continue;
 
-                ImageDetail imageDetail = new ImageDetail();
-                imageDetail.path = path;
-                imageDetail.name = cursor.getString(cursor.getColumnIndex(IMAGES[1]));
-                imageDetail.title = cursor.getString(cursor.getColumnIndex(IMAGES[2]));
-                imageDetail.bucketId = cursor.getInt(cursor.getColumnIndex(IMAGES[3]));
-                imageDetail.bucketName = cursor.getString(cursor.getColumnIndex(IMAGES[4]));
-                imageDetail.mimeType = cursor.getString(cursor.getColumnIndex(IMAGES[5]));
-                imageDetail.addDate = cursor.getLong(cursor.getColumnIndex(IMAGES[6]));
-                imageDetail.modifyDate = cursor.getLong(cursor.getColumnIndex(IMAGES[7]));
-                imageDetail.latitude = cursor.getFloat(cursor.getColumnIndex(IMAGES[8]));
-                imageDetail.longitude = cursor.getFloat(cursor.getColumnIndex(IMAGES[9]));
-                imageDetail.size = cursor.getLong(cursor.getColumnIndex(IMAGES[10]));
-                imageDetail.id = cursor.getLong(cursor.getColumnIndex(IMAGES[11]));
+                AlbumFile albumFile = new AlbumFile();
+                albumFile.path = path;
+                albumFile.name = cursor.getString(cursor.getColumnIndex(IMAGES[1]));
+                albumFile.title = cursor.getString(cursor.getColumnIndex(IMAGES[2]));
+                albumFile.bucketId = cursor.getInt(cursor.getColumnIndex(IMAGES[3]));
+                albumFile.bucketName = cursor.getString(cursor.getColumnIndex(IMAGES[4]));
+                albumFile.mimeType = cursor.getString(cursor.getColumnIndex(IMAGES[5]));
+                albumFile.addDate = cursor.getLong(cursor.getColumnIndex(IMAGES[6]));
+                albumFile.modifyDate = cursor.getLong(cursor.getColumnIndex(IMAGES[7]));
+                albumFile.latitude = cursor.getFloat(cursor.getColumnIndex(IMAGES[8]));
+                albumFile.longitude = cursor.getFloat(cursor.getColumnIndex(IMAGES[9]));
+                albumFile.size = cursor.getLong(cursor.getColumnIndex(IMAGES[10]));
+                albumFile.id = cursor.getLong(cursor.getColumnIndex(IMAGES[11]));
+                albumFiles.add(albumFile);
 
-//                Cursor cursor1 = getContentResolver().query(MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI
-//                        , new String[]{
-//                                MediaStore.Images.Thumbnails.IMAGE_ID,
-//                                MediaStore.Images.Thumbnails.DATA
-//                        }
-//                        , MediaStore.Images.Thumbnails.IMAGE_ID + "=?"
-//                        , new String[]{imageDetail.id + ""}
-//                        , null);
-//
-//                if (cursor1 != null && cursor1.moveToFirst()) {
-//                    imageDetail.fmPaht = cursor1.getString(1);
-//                }
-
-                mImageList.add(imageDetail);
-
-                List<ImageDetail> dir = mImageDir.get(imageDetail.bucketName);
-                if (dir == null) {
-                    List<ImageDetail> temp = new ArrayList<>();
-                    temp.add(imageDetail);
-                    mImageDir.put(imageDetail.bucketName, temp);
+                AlbumFolder albumFolder = albumFolderMap.get(albumFile.bucketName);
+                if (albumFolder == null) {
+                    albumFolder = new AlbumFolder();
+                    albumFolder.id = albumFile.bucketId;
+                    albumFolder.name = albumFile.bucketName;
+                    albumFolder.albumFiles.add(albumFile);
+                    albumFolderMap.put(albumFile.bucketName, albumFolder);
+                    mAlbumFolder.add(albumFolder);
                 } else {
-                    dir.add(imageDetail);
+                    albumFolder.albumFiles.add(albumFile);
                 }
             }
             cursor.close();
-        }
+            AlbumFolder albumFolder = new AlbumFolder();
+            albumFolder.id = 99999;
+            albumFolder.name = "图片和视频";
+            albumFolder.albumFiles.addAll(albumFiles);
+            mAlbumFolder.add(0, albumFolder);
 
+            showAlbumFolder(mAlbumFolder.get(0));
+        }
+    }
+
+    private void showAlbumFolder(AlbumFolder folder){
+        mTxtDir.setText(folder.name);
         mImageGridAdapter = new ImageGridAdapter(this);
-        mImageGridAdapter.addAll(mImageList);
+        mImageGridAdapter.addAll(folder.albumFiles);
         mGridView.setAdapter(mImageGridAdapter);
     }
 
     public void onClickBottom(View view) {
-        Set<String> dirs = mImageDir.keySet();
-        final String[] array = new String[dirs.size()];
+        final String[] array = new String[mAlbumFolder.size()];
         int i = 0;
-        for (String loop : dirs) {
-            array[i] = loop;  //+"("+mImageDir.get(loop).size()+")";
+        for (AlbumFolder loop : mAlbumFolder) {
+            array[i] = loop.name + "(" + loop.albumFiles.size() + ")";
             i++;
         }
 
@@ -150,14 +148,13 @@ public class ImageSelectActivity extends AppBaseActivity {
                 .setItems(array, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mImageGridAdapter.clear();
-                        mImageGridAdapter.addAll(mImageDir.get(array[which]));
+                        showAlbumFolder(mAlbumFolder.get(which));
                     }
                 })
                 .show();
     }
 
-    private class ImageGridAdapter extends ArrayAdapter<ImageDetail> {
+    private class ImageGridAdapter extends ArrayAdapter<AlbumFile> {
 
         public ImageGridAdapter(@NonNull Context context) {
             super(context, 0);
@@ -170,7 +167,7 @@ public class ImageSelectActivity extends AppBaseActivity {
 //            if (convertView == null) {
 //                convertView = new TextView(getContext());
 //            }
-//            ImageDetail detail = getItem(position);
+//            AlbumFile detail = getItem(position);
 //            StringBuilder sb = new StringBuilder();
 //            sb.append("id：" + detail.id).append("\n")
 //                    .append("名称：" + detail.name).append("(").append(detail.mimeType).append(")").append("\n")
@@ -183,14 +180,16 @@ public class ImageSelectActivity extends AppBaseActivity {
 //
 //            ((TextView) convertView).setText(sb.toString());
 
-            if(convertView==null){
-                convertView=new ImageListItem(getContext());
+            if (convertView == null) {
+                convertView = new AlbumFileItem(getContext());
             }
 
-            ((ImageListItem)convertView).setData(getItem(position));
+            ((AlbumFileItem) convertView).setData(getItem(position));
 
             return convertView;
         }
+
+
     }
 
     /**
