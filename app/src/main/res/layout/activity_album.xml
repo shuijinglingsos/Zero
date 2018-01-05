@@ -6,33 +6,56 @@
     android:orientation="vertical"
     tools:context="com.elf.zerodemo.activity.AlbumActivity">
 
-    <GridView
-        android:background="@color/album_list_background"
-        android:id="@+id/gridView"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:numColumns="3"
-        android:horizontalSpacing="@dimen/album_file_list_space"
-        android:verticalSpacing="@dimen/album_file_list_space"
-        android:layout_weight="1" />
+        android:layout_weight="1">
+
+        <GridView
+            android:id="@+id/gv_files"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/album_list_background"
+            android:horizontalSpacing="@dimen/album_file_list_space"
+            android:numColumns="4"
+            android:verticalSpacing="@dimen/album_file_list_space" />
+
+        <FrameLayout
+            android:id="@+id/fl_folders"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#dd000000"
+            android:visibility="gone">
+
+            <ListView
+                android:id="@+id/lv_folders"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:layout_gravity="bottom"
+                android:background="#FFFFFF" />
+
+        </FrameLayout>
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/ll_bottom"
         android:layout_width="match_parent"
         android:layout_height="@dimen/album_bottom_height"
         android:background="@color/album_bottom_background"
-        android:onClick="onClickBottom"
         android:gravity="center_vertical"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tv_dir"
-            android:layout_marginLeft="@dimen/album_bottom_marginLeft"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:gravity="center"
+            android:id="@+id/tv_folder_name"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:text="文件夹"
-            android:textSize="@dimen/album_bottom_textSize"
-            android:textColor="#FFFFFF"/>
+            android:onClick="onShowFolderList"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/album_bottom_textSize" />
 
     </LinearLayout>
 

@@ -6,7 +6,7 @@
     <dimen name="album_bottom_textSize">18sp</dimen>
     <dimen name="album_bottom_marginLeft">20dp</dimen>
 
-    <color name="album_list_background">#555555</color>
+    <color name="album_list_background">#000000</color>
     <color name="album_bottom_background">#444444</color>
 
 </resources>
