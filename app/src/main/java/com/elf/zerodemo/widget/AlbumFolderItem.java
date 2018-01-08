@@ -21,6 +21,8 @@ public class AlbumFolderItem extends AbsLinearLayout {
     private ImageView mIvCover, mIvSelected;
     private TextView mTvName;
 
+    private AlbumFolder mAlbumFolder;
+
     public AlbumFolderItem(Context context) {
         super(context);
     }
@@ -42,6 +44,13 @@ public class AlbumFolderItem extends AbsLinearLayout {
     }
 
     public void setData(AlbumFolder folder) {
+
+        if (mAlbumFolder == folder) {
+            return;
+        }
+
+        mAlbumFolder = folder;
+
         mTvName.setText(folder.name + "（" + folder.albumFiles.size() + "）");
 
         AlbumFile albumFile = null;
@@ -53,11 +62,11 @@ public class AlbumFolderItem extends AbsLinearLayout {
             Glide.with(getContext()).load("").centerCrop().skipMemoryCache(true)
                     .into(mIvCover);
         } else {
-            if(albumFile.name.endsWith("gif")) {
+            if (albumFile.name.endsWith("gif")) {
                 Glide.with(getContext()).load(albumFile.path).asBitmap().centerCrop().skipMemoryCache(true)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(mIvCover);
-            }else{
+            } else {
                 Glide.with(getContext()).load(albumFile.path).centerCrop().skipMemoryCache(true)
                         .into(mIvCover);
             }

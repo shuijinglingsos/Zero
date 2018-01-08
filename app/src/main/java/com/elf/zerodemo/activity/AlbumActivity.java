@@ -102,7 +102,7 @@ public class AlbumActivity extends AppBaseActivity {
                     public void run() {
                         onShowFolderList(null);
                     }
-                }, 300);
+                }, 400);
             }
         });
     }
@@ -335,13 +335,13 @@ public class AlbumActivity extends AppBaseActivity {
         });
 
         AlbumFolder videoFolder = new AlbumFolder();
-        videoFolder.id = 99998;
+        videoFolder.id = Integer.MAX_VALUE;
         videoFolder.name = "所有视频";
         videoFolder.albumFiles.addAll(allVideoFiles);
         mAlbumFolders.add(0, videoFolder);
 
         AlbumFolder albumFolder = new AlbumFolder();
-        albumFolder.id = 99999;
+        albumFolder.id = Integer.MAX_VALUE - 1;
         albumFolder.name = "图片和视频";
         albumFolder.albumFiles.addAll(allAlbumFiles);
         mAlbumFolders.add(0, albumFolder);
