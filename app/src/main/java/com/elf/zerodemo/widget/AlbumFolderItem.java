@@ -6,8 +6,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.elf.zero.widget.AbsLinearLayout;
 import com.elf.zerodemo.R;
+import com.elf.zerodemo.model.AlbumFile;
 import com.elf.zerodemo.model.AlbumFolder;
 
 /**
@@ -42,9 +44,24 @@ public class AlbumFolderItem extends AbsLinearLayout {
     public void setData(AlbumFolder folder) {
         mTvName.setText(folder.name + "（" + folder.albumFiles.size() + "）");
 
-        String path = folder.albumFiles.get(0).path;
-        Glide.with(getContext()).load(path).centerCrop().skipMemoryCache(true)
-                .into(mIvCover);
+        AlbumFile albumFile = null;
+        if (folder.albumFiles.size() > 0) {
+            albumFile = folder.albumFiles.get(0);
+        }
+
+        if (albumFile == null) {
+            Glide.with(getContext()).load("").centerCrop().skipMemoryCache(true)
+                    .into(mIvCover);
+        } else {
+            if(albumFile.name.endsWith("gif")) {
+                Glide.with(getContext()).load(albumFile.path).asBitmap().centerCrop().skipMemoryCache(true)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .into(mIvCover);
+            }else{
+                Glide.with(getContext()).load(albumFile.path).centerCrop().skipMemoryCache(true)
+                        .into(mIvCover);
+            }
+        }
     }
 
     public void setSelected(boolean value) {

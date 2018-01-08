@@ -4,23 +4,23 @@
     android:layout_height="match_parent"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="10dp">
+    android:padding="@dimen/album_folder_list_item_padding">
 
     <ImageView
         android:id="@+id/iv_cover"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:background="#eeeeee" />
+        android:layout_width="@dimen/album_folder_list_cover_height"
+        android:layout_height="@dimen/album_folder_list_cover_height"
+        android:background="@color/album_folder_list_cover_default" />
 
     <TextView
         android:id="@+id/tv_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginLeft="@dimen/album_folder_list_item_text_margin_left_right"
+        android:layout_marginRight="@dimen/album_folder_list_item_text_margin_left_right"
         android:layout_weight="1"
         android:text="文件夹（23）"
-        android:textSize="20sp" />
+        android:textSize="@dimen/album_folder_list_item_textSize" />
 
     <ImageView
         android:id="@+id/iv_selected"

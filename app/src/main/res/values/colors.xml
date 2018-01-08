@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">#679415</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="image_list_default">#999999</color>
+    <color name="button_click_press">#30000000</color>
 
     <!--<color name="colorPrimary">#3F51B5</color>-->
     <!--<color name="colorPrimaryDark">#303F9F</color>-->

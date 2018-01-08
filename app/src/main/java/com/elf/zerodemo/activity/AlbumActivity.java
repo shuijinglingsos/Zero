@@ -1,9 +1,13 @@
 package com.elf.zerodemo.activity;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.content.ContentResolver;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -15,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.elf.zero.utils.LogUtils;
 import com.elf.zerodemo.R;
 import com.elf.zerodemo.adapter.AlbumFileListAdapter;
 import com.elf.zerodemo.adapter.AlbumFolderListAdapter;
@@ -34,9 +39,13 @@ import java.util.Map;
  */
 public class AlbumActivity extends AppBaseActivity {
 
+    private final static String TAG = AlbumActivity.class.getSimpleName();
+
+    private Handler mHandler=new Handler();
+    private boolean mRunAnim=false;
     private View mFlFolders;
     private TextView mTvFolderName;
-    private AbsListView mFileGridView, mFolderListView;
+    private AbsListView mGvFile, mLvFolder;
     private AlbumFileListAdapter mAlbumFileListAdapter;
     private AlbumFolderListAdapter mAlbumFolderListAdapter;
     private List<AlbumFolder> mAlbumFolders = new ArrayList<>();
@@ -55,34 +64,124 @@ public class AlbumActivity extends AppBaseActivity {
         showData();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (mFlFolders.getVisibility() == View.VISIBLE) {
+            onShowFolderList(null);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     private void init() {
         mFlFolders = findViewById(R.id.fl_folders);
-        mFileGridView = (AbsListView) findViewById(R.id.gv_files);
-        mFolderListView = (AbsListView) findViewById(R.id.lv_folders);
+        mGvFile = (AbsListView) findViewById(R.id.gv_files);
+        mLvFolder = (AbsListView) findViewById(R.id.lv_folders);
         mTvFolderName = (TextView) findViewById(R.id.tv_folder_name);
 
-        mFileGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mFlFolders.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onShowFolderList(null);
+            }
+        });
+        mGvFile.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 showToast(mAlbumFileListAdapter.getItem(position).path);
             }
         });
-        mFolderListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mLvFolder.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mAlbumFolderListAdapter.setSelectedIndex(position);
                 mAlbumFolderListAdapter.notifyDataSetChanged();
                 showAlbumFiles(mAlbumFolderListAdapter.getItem(position));
-                mFlFolders.setVisibility(View.GONE);
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        onShowFolderList(null);
+                    }
+                }, 300);
             }
         });
     }
 
     public void onShowFolderList(View view) {
-        if (mFlFolders.getVisibility() == View.VISIBLE) {
-            mFlFolders.setVisibility(View.GONE);
-        } else {
-            mFlFolders.setVisibility(View.VISIBLE);
+        if (mRunAnim) {
+            return;
+        }
+
+        int height = getResources().getDimensionPixelSize(R.dimen.album_folder_list_height);
+
+        if (mFlFolders.getVisibility() == View.VISIBLE) {   //隐藏
+
+            ObjectAnimator bgAnim = ObjectAnimator.ofFloat(mFlFolders, "alpha", 1f, 0f);
+            ObjectAnimator listAnim = ObjectAnimator.ofFloat(mLvFolder, "translationY", 0, mLvFolder.getTop() + height);
+
+            bgAnim.setDuration(400);
+            listAnim.setDuration(400);
+
+            listAnim.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    mRunAnim = true;
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mRunAnim = false;
+                    mFlFolders.setVisibility(View.GONE);
+                    mLvFolder.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+            listAnim.start();
+            bgAnim.start();
+
+        } else {    //显示
+
+
+            ObjectAnimator bgAnim = ObjectAnimator.ofFloat(mFlFolders, "alpha", 0f, 1f);
+            ObjectAnimator listAnim = ObjectAnimator.ofFloat(mLvFolder, "translationY", mLvFolder.getTop() + height, 0);
+
+            bgAnim.setDuration(400);
+            listAnim.setDuration(400);
+
+            listAnim.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    mRunAnim = true;
+                    mFlFolders.setVisibility(View.VISIBLE);
+                    mLvFolder.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mRunAnim = false;
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+            listAnim.start();
+            bgAnim.start();
         }
     }
 
@@ -111,7 +210,7 @@ public class AlbumActivity extends AppBaseActivity {
         mTvFolderName.setText(folder.name);
         mAlbumFileListAdapter = new AlbumFileListAdapter(this);
         mAlbumFileListAdapter.addAll(folder.albumFiles);
-        mFileGridView.setAdapter(mAlbumFileListAdapter);
+        mGvFile.setAdapter(mAlbumFileListAdapter);
     }
 
     /**
@@ -120,9 +219,8 @@ public class AlbumActivity extends AppBaseActivity {
     private void showAlbumFolders() {
         mAlbumFolderListAdapter = new AlbumFolderListAdapter(this);
         mAlbumFolderListAdapter.addAll(mAlbumFolders);
-        mFolderListView.setAdapter(mAlbumFolderListAdapter);
+        mLvFolder.setAdapter(mAlbumFolderListAdapter);
     }
-
 
     /**
      * 读取相册文件
@@ -162,6 +260,8 @@ public class AlbumActivity extends AppBaseActivity {
                 imageFile.longitude = cursor.getFloat(cursor.getColumnIndex(IMAGES[9]));
                 imageFile.size = cursor.getLong(cursor.getColumnIndex(IMAGES[10]));
                 imageFile.id = cursor.getLong(cursor.getColumnIndex(IMAGES[11]));
+
+                LogUtils.v(TAG, "--image id:" + imageFile.id);
                 allAlbumFiles.add(imageFile);
 
                 AlbumFolder albumFolder = albumFolderMap.get(imageFile.bucketId);
@@ -217,6 +317,9 @@ public class AlbumActivity extends AppBaseActivity {
                 }
                 videoFile.width = width;
                 videoFile.height = height;
+                videoFile.id = cursor.getLong(cursor.getColumnIndex(IMAGES[13]));
+
+                LogUtils.v(TAG, "--video id:" + videoFile.id);
 
                 allAlbumFiles.add(videoFile);
                 allVideoFiles.add(videoFile);
@@ -247,7 +350,6 @@ public class AlbumActivity extends AppBaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         showData();
     }
 
@@ -285,7 +387,8 @@ public class AlbumActivity extends AppBaseActivity {
             MediaStore.Video.Media.LONGITUDE,
             MediaStore.Video.Media.SIZE,
             MediaStore.Video.Media.DURATION,
-            MediaStore.Video.Media.RESOLUTION
+            MediaStore.Video.Media.RESOLUTION,
+            MediaStore.Video.Media._ID
     };
 
 //    视频缩略图在sd卡已经有了 不需要自己创建

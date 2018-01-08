@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/image_list_default"
+    android:background="@color/album_file_list_item_default"
     android:orientation="vertical">
 
     <ImageView

@@ -27,14 +27,15 @@
             android:background="#dd000000"
             android:visibility="gone">
 
-            <ListView
-                android:id="@+id/lv_folders"
-                android:layout_width="match_parent"
-                android:layout_height="400dp"
-                android:layout_gravity="bottom"
-                android:background="#FFFFFF" />
-
         </FrameLayout>
+
+        <ListView
+            android:visibility="gone"
+            android:layout_gravity="bottom"
+            android:id="@+id/lv_folders"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/album_folder_list_height"
+            android:background="#FFFFFF" />
     </FrameLayout>
 
     <LinearLayout
@@ -42,13 +43,15 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/album_bottom_height"
         android:background="@color/album_bottom_background"
-        android:gravity="center_vertical"
+        android:gravity="center_vertical|right"
         android:orientation="vertical">
 
         <TextView
+            android:background="@drawable/button_click_style"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:gravity="center"
+            android:minWidth="110dp"
             android:id="@+id/tv_folder_name"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
