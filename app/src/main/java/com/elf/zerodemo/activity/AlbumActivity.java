@@ -317,7 +317,7 @@ public class AlbumActivity extends AppBaseActivity {
                 }
                 videoFile.width = width;
                 videoFile.height = height;
-                videoFile.id = cursor.getLong(cursor.getColumnIndex(IMAGES[13]));
+                videoFile.id = cursor.getLong(cursor.getColumnIndex(VIDEOS[13]));
 
                 LogUtils.v(TAG, "--video id:" + videoFile.id);
 
