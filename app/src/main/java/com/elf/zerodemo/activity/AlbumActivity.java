@@ -3,7 +3,6 @@ package com.elf.zerodemo.activity;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
 import android.content.ContentResolver;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -12,11 +11,12 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.TextView;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.elf.zero.utils.LogUtils;
@@ -41,14 +41,16 @@ public class AlbumActivity extends AppBaseActivity {
 
     private final static String TAG = AlbumActivity.class.getSimpleName();
 
-    private Handler mHandler=new Handler();
-    private boolean mRunAnim=false;
-    private View mFlFolders;
-    private TextView mTvFolderName;
+    private Handler mHandler = new Handler();
+    private boolean mRunAnim = false;
+    private View mViewFoldersShade;
+    private Button mBtnFolder, mBtnSend;
     private AbsListView mGvFile, mLvFolder;
     private AlbumFileListAdapter mAlbumFileListAdapter;
     private AlbumFolderListAdapter mAlbumFolderListAdapter;
     private List<AlbumFolder> mAlbumFolders = new ArrayList<>();
+    private List<AlbumFile> mSelectedFiles = new ArrayList<>();
+    private int mSelectedMaxNum = 9;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,23 +68,36 @@ public class AlbumActivity extends AppBaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (mFlFolders.getVisibility() == View.VISIBLE) {
-            onShowFolderList(null);
+        if (mViewFoldersShade.getVisibility() == View.VISIBLE) {
+            onShowFolderList();
         } else {
             super.onBackPressed();
         }
     }
 
     private void init() {
-        mFlFolders = findViewById(R.id.fl_folders);
+        mViewFoldersShade = findViewById(R.id.view_folders_shade);
         mGvFile = (AbsListView) findViewById(R.id.gv_files);
         mLvFolder = (AbsListView) findViewById(R.id.lv_folders);
-        mTvFolderName = (TextView) findViewById(R.id.tv_folder_name);
+        mBtnFolder = (Button) findViewById(R.id.btn_folder);
+        mBtnSend = (Button) findViewById(R.id.btn_send);
 
-        mFlFolders.setOnClickListener(new View.OnClickListener() {
+        mBtnFolder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onShowFolderList(null);
+                onShowFolderList();
+            }
+        });
+        mBtnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                send();
+            }
+        });
+        mViewFoldersShade.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onShowFolderList();
             }
         });
         mGvFile.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -100,23 +115,46 @@ public class AlbumActivity extends AppBaseActivity {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        onShowFolderList(null);
+                        onShowFolderList();
                     }
                 }, 400);
             }
         });
+
+        mAlbumFileListAdapter = new AlbumFileListAdapter(this);
+        mAlbumFileListAdapter.setOnItemCheckChangeListener(new AlbumFileListAdapter.OnItemCheckChangeListener() {
+            @Override
+            public void onCheckChange(AlbumFile albumFile, boolean checked) {
+                if (checked) {
+                    if (mSelectedFiles.size() >= mSelectedMaxNum) {
+                        showToast("最多选中 " + mSelectedMaxNum + " 项");
+                    } else {
+                        albumFile.checked = checked;
+                        mSelectedFiles.add(albumFile);
+                        mAlbumFileListAdapter.notifyDataSetChanged();
+                        mBtnSend.setText("发送" + "(" + mSelectedFiles.size() + ")");
+                    }
+                } else {
+                    albumFile.checked = checked;
+                    mSelectedFiles.remove(albumFile);
+                    mAlbumFileListAdapter.notifyDataSetChanged();
+                    mBtnSend.setText("发送" + "(" + mSelectedFiles.size() + ")");
+                }
+            }
+        });
+        mGvFile.setAdapter(mAlbumFileListAdapter);
     }
 
-    public void onShowFolderList(View view) {
+    public void onShowFolderList() {
         if (mRunAnim) {
             return;
         }
 
         int height = getResources().getDimensionPixelSize(R.dimen.album_folder_list_height);
 
-        if (mFlFolders.getVisibility() == View.VISIBLE) {   //隐藏
+        if (mViewFoldersShade.getVisibility() == View.VISIBLE) {   //隐藏
 
-            ObjectAnimator bgAnim = ObjectAnimator.ofFloat(mFlFolders, "alpha", 1f, 0f);
+            ObjectAnimator bgAnim = ObjectAnimator.ofFloat(mViewFoldersShade, "alpha", 1f, 0f);
             ObjectAnimator listAnim = ObjectAnimator.ofFloat(mLvFolder, "translationY", 0, mLvFolder.getTop() + height);
 
             bgAnim.setDuration(400);
@@ -131,7 +169,7 @@ public class AlbumActivity extends AppBaseActivity {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     mRunAnim = false;
-                    mFlFolders.setVisibility(View.GONE);
+                    mViewFoldersShade.setVisibility(View.GONE);
                     mLvFolder.setVisibility(View.GONE);
                 }
 
@@ -147,11 +185,8 @@ public class AlbumActivity extends AppBaseActivity {
             });
             listAnim.start();
             bgAnim.start();
-
         } else {    //显示
-
-
-            ObjectAnimator bgAnim = ObjectAnimator.ofFloat(mFlFolders, "alpha", 0f, 1f);
+            ObjectAnimator bgAnim = ObjectAnimator.ofFloat(mViewFoldersShade, "alpha", 0f, 1f);
             ObjectAnimator listAnim = ObjectAnimator.ofFloat(mLvFolder, "translationY", mLvFolder.getTop() + height, 0);
 
             bgAnim.setDuration(400);
@@ -161,7 +196,7 @@ public class AlbumActivity extends AppBaseActivity {
                 @Override
                 public void onAnimationStart(Animator animation) {
                     mRunAnim = true;
-                    mFlFolders.setVisibility(View.VISIBLE);
+                    mViewFoldersShade.setVisibility(View.VISIBLE);
                     mLvFolder.setVisibility(View.VISIBLE);
                 }
 
@@ -183,6 +218,21 @@ public class AlbumActivity extends AppBaseActivity {
             listAnim.start();
             bgAnim.start();
         }
+    }
+
+    public void send() {
+        if (mSelectedFiles.size() == 0) {
+            showToast("未选中项目");
+            return;
+        }
+        String[] paths = new String[mSelectedFiles.size()];
+        for (int i = 0; i < paths.length; i++) {
+            paths[i] = mSelectedFiles.get(i).path;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setItems(paths, null);
+        builder.show();
     }
 
     /**
@@ -207,8 +257,8 @@ public class AlbumActivity extends AppBaseActivity {
      * @param folder 文件夹
      */
     private void showAlbumFiles(AlbumFolder folder) {
-        mTvFolderName.setText(folder.name);
-        mAlbumFileListAdapter = new AlbumFileListAdapter(this);
+        mBtnFolder.setText(folder.name);
+        mAlbumFileListAdapter.clear();
         mAlbumFileListAdapter.addAll(folder.albumFiles);
         mGvFile.setAdapter(mAlbumFileListAdapter);
     }
@@ -390,6 +440,7 @@ public class AlbumActivity extends AppBaseActivity {
             MediaStore.Video.Media.RESOLUTION,
             MediaStore.Video.Media._ID
     };
+
 
 //    视频缩略图在sd卡已经有了 不需要自己创建
 //    Cursor cursor = getContentResolver().query(MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI

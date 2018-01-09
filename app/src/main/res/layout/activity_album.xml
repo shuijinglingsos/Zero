@@ -20,14 +20,12 @@
             android:numColumns="4"
             android:verticalSpacing="@dimen/album_file_list_space" />
 
-        <FrameLayout
-            android:id="@+id/fl_folders"
+        <View
+            android:id="@+id/view_folders_shade"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#dd000000"
-            android:visibility="gone">
-
-        </FrameLayout>
+            android:visibility="gone" />
 
         <ListView
             android:visibility="gone"
@@ -43,22 +41,38 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/album_bottom_height"
         android:background="@color/album_bottom_background"
-        android:gravity="center_vertical|right"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
-        <TextView
+        <Button
             android:background="@drawable/button_click_style"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:gravity="center"
             android:minWidth="110dp"
-            android:id="@+id/tv_folder_name"
+            android:id="@+id/btn_folder"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="文件夹"
-            android:onClick="onShowFolderList"
             android:textColor="#FFFFFF"
             android:textSize="@dimen/album_bottom_textSize" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/btn_send"
+            android:background="@drawable/button_click_style"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/album_bottom_textSize"
+            android:text="发送(0)"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            />
 
     </LinearLayout>
 

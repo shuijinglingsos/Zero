@@ -59,15 +59,15 @@ public class AlbumFolderListItem extends AbsLinearLayout {
         }
 
         if (albumFile == null) {
-            Glide.with(getContext()).load("").centerCrop().skipMemoryCache(true)
+            Glide.with(getContext()).load("").centerCrop().dontAnimate().skipMemoryCache(true)
                     .into(mIvCover);
         } else {
             if (albumFile.name.endsWith("gif")) {
-                Glide.with(getContext()).load(albumFile.path).asBitmap().centerCrop().skipMemoryCache(true)
+                Glide.with(getContext()).load(albumFile.path).asBitmap().centerCrop().dontAnimate().skipMemoryCache(true)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(mIvCover);
             } else {
-                Glide.with(getContext()).load(albumFile.path).centerCrop().skipMemoryCache(true)
+                Glide.with(getContext()).load(albumFile.path).centerCrop().dontAnimate().skipMemoryCache(true)
                         .into(mIvCover);
             }
         }

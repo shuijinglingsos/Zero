@@ -19,6 +19,7 @@ import com.elf.zerodemo.widget.AlbumFileListItem;
 public class AlbumFileListAdapter extends ArrayAdapter<AlbumFile> {
 
     private int mItemWidth;
+    private OnItemCheckChangeListener mOnItemCheckChangeListener;
 
     public AlbumFileListAdapter(@NonNull Context context) {
         super(context, 0);
@@ -44,11 +45,20 @@ public class AlbumFileListAdapter extends ArrayAdapter<AlbumFile> {
         albumFileListItem.setOnCheckedListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                albumFile.checked = !albumFile.checked;
-                notifyDataSetChanged();
+                if (mOnItemCheckChangeListener != null) {
+                    mOnItemCheckChangeListener.onCheckChange(albumFile, !albumFile.checked);
+                }
             }
         });
 
         return convertView;
+    }
+
+    public void setOnItemCheckChangeListener(OnItemCheckChangeListener listener) {
+        mOnItemCheckChangeListener = listener;
+    }
+
+    public interface OnItemCheckChangeListener {
+        void onCheckChange(AlbumFile albumFile, boolean checked);
     }
 }

@@ -68,17 +68,17 @@ public class AlbumFileListItem extends AbsLinearLayout {
             if (data.name.endsWith("gif")) {
                 mTextView.setText("动图");
                 mTextView.setVisibility(VISIBLE);
-                Glide.with(getContext()).load(data.path).asBitmap().centerCrop().skipMemoryCache(true)
+                Glide.with(getContext()).load(data.path).asBitmap().centerCrop().dontAnimate().skipMemoryCache(true)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(mImageView);
             } else {
-                Glide.with(getContext()).load(data.path).centerCrop().skipMemoryCache(true)
+                Glide.with(getContext()).load(data.path).centerCrop().dontAnimate().skipMemoryCache(true)
                         .into(mImageView);
                 mTextView.setVisibility(GONE);
             }
         } else if (AlbumFile.TYPE_VIDEO == mAlbumFile.fileType) {
             mTextView.setText("视频 - " + data.duration);
-            Glide.with(getContext()).load(data.path).centerCrop().skipMemoryCache(true)
+            Glide.with(getContext()).load(data.path).centerCrop().dontAnimate().skipMemoryCache(true)
                     .into(mImageView);
         }
     }
