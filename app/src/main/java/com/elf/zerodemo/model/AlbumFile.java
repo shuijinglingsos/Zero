@@ -34,4 +34,7 @@ public class AlbumFile {
 
     @AlbumFile.FileType
     public int fileType;
+
+
+    public boolean checked;
 }

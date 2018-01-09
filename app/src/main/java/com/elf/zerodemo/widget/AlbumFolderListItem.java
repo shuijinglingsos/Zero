@@ -16,18 +16,18 @@ import com.elf.zerodemo.model.AlbumFolder;
  * 文件夹列表项目
  * Created by Lidong on 2018/1/5.
  */
-public class AlbumFolderItem extends AbsLinearLayout {
+public class AlbumFolderListItem extends AbsLinearLayout {
 
     private ImageView mIvCover, mIvSelected;
     private TextView mTvName;
 
     private AlbumFolder mAlbumFolder;
 
-    public AlbumFolderItem(Context context) {
+    public AlbumFolderListItem(Context context) {
         super(context);
     }
 
-    public AlbumFolderItem(Context context, AttributeSet attrs) {
+    public AlbumFolderListItem(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 

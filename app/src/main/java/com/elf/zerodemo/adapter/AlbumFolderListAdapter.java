@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import com.elf.zerodemo.model.AlbumFolder;
-import com.elf.zerodemo.widget.AlbumFolderItem;
+import com.elf.zerodemo.widget.AlbumFolderListItem;
 
 /**
  * 相册文件加列表适配器
@@ -27,10 +27,10 @@ public class AlbumFolderListAdapter extends ArrayAdapter<AlbumFolder> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
         if (convertView == null) {
-            convertView = new AlbumFolderItem(getContext());
+            convertView = new AlbumFolderListItem(getContext());
         }
 
-        AlbumFolderItem folderItem = (AlbumFolderItem) convertView;
+        AlbumFolderListItem folderItem = (AlbumFolderListItem) convertView;
         folderItem.setData(getItem(position));
         folderItem.setSelected(mSelectedIndex == position);
         return convertView;
