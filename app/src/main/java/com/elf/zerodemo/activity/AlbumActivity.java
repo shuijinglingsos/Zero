@@ -103,7 +103,15 @@ public class AlbumActivity extends AppBaseActivity {
         mGvFile.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                showToast(mAlbumFileListAdapter.getItem(position).path);
+
+
+                String[] paths = new String[mAlbumFileListAdapter.getCount()];
+                for (int i = 0; i < paths.length; i++) {
+                    paths[i] = mAlbumFileListAdapter.getItem(i).path;
+                }
+                GalleryActivity.open(AlbumActivity.this, paths, position);
+
+//                showToast(mAlbumFileListAdapter.getItem(position).path);
             }
         });
         mLvFolder.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -230,9 +238,11 @@ public class AlbumActivity extends AppBaseActivity {
             paths[i] = mSelectedFiles.get(i).path;
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setItems(paths, null);
-        builder.show();
+        GalleryActivity.open(this, paths, 0);
+
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setItems(paths, null);
+//        builder.show();
     }
 
     /**

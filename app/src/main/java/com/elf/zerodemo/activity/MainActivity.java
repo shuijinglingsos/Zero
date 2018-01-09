@@ -29,6 +29,7 @@ public class MainActivity extends AppBaseActivity {
             "FlowLayout",
             "PullRefreshLayout",
             "Album",
+//            "Gallery",
             "About"
     };
 
@@ -44,6 +45,7 @@ public class MainActivity extends AppBaseActivity {
             FlowLayoutActivity.class,
             PullRefreshLayoutActivity.class,
             AlbumActivity.class,
+//            GalleryActivity.class,
             AboutActivity.class
     };
 
