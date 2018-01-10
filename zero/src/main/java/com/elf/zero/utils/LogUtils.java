@@ -10,6 +10,6 @@ import android.util.Log;
 public class LogUtils {
 
     public static void v(String tag, String msg) {
-        Log.d("zero-lib", tag + " " + msg);
+        Log.d("zero", tag + " " + msg);
     }
 }
