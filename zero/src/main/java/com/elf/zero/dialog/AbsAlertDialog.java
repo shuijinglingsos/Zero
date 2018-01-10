@@ -10,13 +10,13 @@ import android.view.View;
  * dialog基类
  * Created by Lidong on 2017/12/5.
  */
-public abstract class BaseAlertDialog extends AlertDialog {
+public abstract class AbsAlertDialog extends AlertDialog {
 
-    protected BaseAlertDialog(@NonNull Context context) {
+    protected AbsAlertDialog(@NonNull Context context) {
         this(context, 0);
     }
 
-    protected BaseAlertDialog(@NonNull Context context, @StyleRes int themeResId) {
+    protected AbsAlertDialog(@NonNull Context context, @StyleRes int themeResId) {
         super(context, themeResId);
         setContentView(getLayoutResId());
         initView();
