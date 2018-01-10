@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.elf.zero.utils.LogUtils;
 import com.elf.zero.widget.AbsLinearLayout;
 import com.elf.zerodemo.R;
 import com.elf.zerodemo.model.AlbumFile;
@@ -62,10 +63,10 @@ public class AlbumFileListItem extends AbsLinearLayout {
         }
 
         mAlbumFile = data;
-
+        LogUtils.v("Album", "mimeType : " + data.mimeType);
         if (AlbumFile.TYPE_IMAGE == mAlbumFile.fileType) {
 
-            if (data.name.endsWith("gif")) {
+            if (data.mimeType.contains("gif")) {
                 mTextView.setText("动图");
                 mTextView.setVisibility(VISIBLE);
                 Glide.with(getContext()).load(data.path).asBitmap().centerCrop().dontAnimate().skipMemoryCache(true)
@@ -78,6 +79,7 @@ public class AlbumFileListItem extends AbsLinearLayout {
             }
         } else if (AlbumFile.TYPE_VIDEO == mAlbumFile.fileType) {
             mTextView.setText("视频 - " + data.duration);
+            mTextView.setVisibility(VISIBLE);
             Glide.with(getContext()).load(data.path).centerCrop().dontAnimate().skipMemoryCache(true)
                     .into(mImageView);
         }

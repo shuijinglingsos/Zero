@@ -2,16 +2,24 @@ package com.elf.zerodemo.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.PointF;
+import android.net.Uri;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.davemorrissey.labs.subscaleview.ImageSource;
+import com.davemorrissey.labs.subscaleview.ImageViewState;
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
+import com.elf.zero.utils.DeviceUtils;
 import com.elf.zerodemo.R;
+
+import java.io.File;
 
 public class GalleryActivity extends AppBaseActivity {
 
@@ -95,12 +103,41 @@ public class GalleryActivity extends AppBaseActivity {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            ImageView imageView = new ImageView(mContext);
+
+            float maxScale = 3;
+            float doubleClickScale = 2;
+            int zoomDuration = 250;
+
+            SubsamplingScaleImageView imageView = new SubsamplingScaleImageView(mContext);
+            imageView.setDoubleTapZoomDuration(zoomDuration);
+            imageView.setDoubleTapZoomScale(doubleClickScale);
+            imageView.setMaxScale(maxScale);
             imageView.setLayoutParams(new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             container.addView(imageView);
 
-            Glide.with(mContext).load(mItems[position]).skipMemoryCache(true).into(imageView);
+            try {
+                String path = mItems[position];
+                ImageSource imageSource = ImageSource.uri(Uri.fromFile(new File(path)));
+                Bitmap bitmap = BitmapFactory.decodeFile(path);
+                int screenWidth = DeviceUtils.getScreenWidth();
+                if (bitmap.getHeight() > bitmap.getWidth() * 3) {  //长图
+                    imageView.setImage(imageSource, new ImageViewState(1.0F, new PointF(0, 0), 0));
+                    imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP);
+                } else if (screenWidth > bitmap.getWidth()) {
+                    float scale = (float) screenWidth / bitmap.getWidth();
+                    imageView.setImage(imageSource, new ImageViewState(scale, new PointF(0, 0), 0));
+                    imageView.setMaxScale(scale * maxScale);
+                    imageView.setDoubleTapZoomScale(scale * doubleClickScale);
+                } else {
+                    imageView.setImage(imageSource);
+                    imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+//            Glide.with(mContext).load(mItems[position]).skipMemoryCache(true).into(imageView);
 
             return imageView;
         }

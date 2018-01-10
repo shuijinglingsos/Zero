@@ -2,11 +2,13 @@ package com.elf.zerodemo.model;
 
 import android.support.annotation.IntDef;
 
+import java.io.Serializable;
+
 /**
  * 相册文件
  * Created by Lidong on 2018/1/3.
  */
-public class AlbumFile {
+public class AlbumFile implements Serializable {
 
     public static final int TYPE_IMAGE = 0;
     public static final int TYPE_VIDEO = 1;
