@@ -30,6 +30,7 @@ public class MainActivity extends AppBaseActivity {
             "PullRefreshLayout",
             "Album",
 //            "Gallery",
+            "CrashHandler",
             "About"
     };
 
@@ -46,6 +47,7 @@ public class MainActivity extends AppBaseActivity {
             PullRefreshLayoutActivity.class,
             AlbumActivity.class,
 //            GalleryActivity.class,
+            CrashHandlerActivity.class,
             AboutActivity.class
     };
 
@@ -53,9 +55,6 @@ public class MainActivity extends AppBaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Zero.init(getApplicationContext());
-
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_list_item_1, names);
 
