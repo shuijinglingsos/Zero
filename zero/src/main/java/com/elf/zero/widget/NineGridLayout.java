@@ -83,7 +83,7 @@ public class NineGridLayout extends ViewGroup {
 
         int childCount = getChildCount();
         if (childCount == 1) {
-            int childWidth = (getMeasuredWidth() - mPaddingLeft - mPaddingRight)/3*2;
+            int childWidth = (getMeasuredWidth() - mPaddingLeft - mPaddingRight) / 3 * 2;
             View child = getChildAt(0);
             child.layout(mPaddingLeft, mPaddingTop,
                     mPaddingLeft + childWidth, mPaddingTop + childWidth);
@@ -106,7 +106,7 @@ public class NineGridLayout extends ViewGroup {
         }
 
         int useWidth = mPaddingLeft, useHeight = mPaddingTop;
-        int childWidth = (getMeasuredWidth() - mPaddingLeft - mPaddingRight - mLineSpacing*2) / 3;
+        int childWidth = (getMeasuredWidth() - mPaddingLeft - mPaddingRight - mLineSpacing * 2) / 3;
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
             if (i > 0 && i % 3 == 0) {
