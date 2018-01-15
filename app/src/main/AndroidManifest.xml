@@ -41,6 +41,7 @@
         <activity android:name=".activity.AlbumActivity" />
         <activity android:name=".activity.GalleryActivity" />
         <activity android:name=".activity.CrashHandlerActivity" />
+        <activity android:name=".activity.NineGridLayoutActivity" />
     </application>
 
 </manifest>
