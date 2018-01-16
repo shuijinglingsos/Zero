@@ -10,6 +10,7 @@ import android.widget.ListView;
 import com.elf.zero.utils.LogUtils;
 import com.elf.zero.widget.PullRefreshLayout;
 import com.elf.zerodemo.R;
+import com.elf.zerodemo.widget.LoadMoreWidget;
 
 public class PullRefreshLayoutActivity extends AppBaseActivity {
 
@@ -50,50 +51,75 @@ public class PullRefreshLayoutActivity extends AppBaseActivity {
                 LogUtils.v(TAG, "--onScroll--");
             }
         });
+//        mListView.addFooterView(new LoadMoreWidget(this));
 
         mPullRefreshLayout = (PullRefreshLayout) findViewById(R.id.pullRefreshLayout);
-        mPullRefreshLayout.setPullRefreshInterface(new PullRefreshLayout.PullRefreshInterface() {
+        mPullRefreshLayout.setPullListener(new PullRefreshLayout.PullListener() {
             @Override
-            public boolean isCanPull() {
+            public boolean canDownPull() {
                 if(mListView.getFirstVisiblePosition() !=0){
                     return false;
                 }
-
                 return mListView.getChildCount() > 0 ? mListView.getChildAt(0).getTop() == 0 : true;
             }
 
             @Override
-            public void refresh() {
-                startRefresh();
+            public boolean canUpPull() {
+                if (mListView.getLastVisiblePosition() != mArrayAdapter.getCount() - 1) {
+                    return false;
+                }
+                View lastVisibleItemView = mListView.getChildAt(mListView.getChildCount() - 1);
+                return lastVisibleItemView != null && lastVisibleItemView.getBottom() == mListView.getHeight();
+            }
+
+            @Override
+            public boolean updateView() {
+//                mArrayAdapter.notifyDataSetChanged();
+                return false;
             }
         });
+//        mPullRefreshLayout.setPullRefreshInterface(new PullRefreshLayout.PullRefreshInterface() {
+//            @Override
+//            public boolean isCanPull() {
+//                if(mListView.getFirstVisiblePosition() !=0){
+//                    return false;
+//                }
+//
+//                return mListView.getChildCount() > 0 ? mListView.getChildAt(0).getTop() == 0 : true;
+//            }
+//
+//            @Override
+//            public void refresh() {
+//                startRefresh();
+//            }
+//        });
 
-//        showData(20);
+        showData(20);
     }
 
-    public void startRefresh(){
-        new Thread(){
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mPullRefreshLayout.stopRefresh();
-                        showData(50);
-                    }
-                });
-            }
-        }.start();
-    }
-
-    public void onStopRefresh(View view) {
-        mPullRefreshLayout.stopRefresh();
-    }
+//    public void startRefresh(){
+//        new Thread(){
+//            @Override
+//            public void run() {
+//                try {
+//                    Thread.sleep(3000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mPullRefreshLayout.stopRefresh();
+//                        showData(50);
+//                    }
+//                });
+//            }
+//        }.start();
+//    }
+//
+//    public void onStopRefresh(View view) {
+//        mPullRefreshLayout.stopRefresh();
+//    }
 
     public void showData(int count){
         String[] names = new String[count];

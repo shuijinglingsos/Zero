@@ -33,10 +33,4 @@
 
     </com.elf.zero.widget.PullRefreshLayout>
 
-    <!--<Button-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="STOP_REFRESH"-->
-        <!--android:onClick="onStopRefresh"/>-->
-
 </LinearLayout>
