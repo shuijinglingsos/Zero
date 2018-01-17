@@ -32,6 +32,9 @@ public abstract class TouchEventLayout extends ViewGroup implements TouchEventHe
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
+
+        outputLog("dispatchTouchEvent - "+ev.getAction());
+
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 outputLog("dispatchTouchEvent - ACTION_DOWN");
@@ -50,6 +53,8 @@ public abstract class TouchEventLayout extends ViewGroup implements TouchEventHe
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+
+        outputLog("onInterceptTouchEvent - "+ev.getAction());
 
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -70,6 +75,8 @@ public abstract class TouchEventLayout extends ViewGroup implements TouchEventHe
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
+        outputLog("onTouchEvent - "+event.getAction());
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:

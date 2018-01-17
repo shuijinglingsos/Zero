@@ -1,6 +1,7 @@
 package com.elf.zerodemo.activity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -54,9 +55,9 @@ public class PullRefreshLayoutActivity extends AppBaseActivity {
 //        mListView.addFooterView(new LoadMoreWidget(this));
 
         mPullRefreshLayout = (PullRefreshLayout) findViewById(R.id.pullRefreshLayout);
-        mPullRefreshLayout.setPullListener(new PullRefreshLayout.PullListener() {
+        mPullRefreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
-            public boolean canDownPull() {
+            public boolean canPull() {
                 if(mListView.getFirstVisiblePosition() !=0){
                     return false;
                 }
@@ -64,70 +65,71 @@ public class PullRefreshLayoutActivity extends AppBaseActivity {
             }
 
             @Override
-            public boolean canUpPull() {
+            public void refresh() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        showData(10);
+                        mPullRefreshLayout.stopRefresh();
+                    }
+                }, 5000);
+            }
+        });
+        mPullRefreshLayout.setOnLoadMoreListener(new PullRefreshLayout.OnLoadMoreListener() {
+            @Override
+            public boolean canPull() {
+                if(mArrayAdapter==null) {
+                    return false;
+                }
+
                 if (mListView.getLastVisiblePosition() != mArrayAdapter.getCount() - 1) {
                     return false;
                 }
                 View lastVisibleItemView = mListView.getChildAt(mListView.getChildCount() - 1);
-                return lastVisibleItemView != null && lastVisibleItemView.getBottom() == mListView.getHeight();
+                return lastVisibleItemView != null && lastVisibleItemView.getBottom() <= mListView.getHeight();
             }
 
             @Override
-            public boolean updateView() {
-//                mArrayAdapter.notifyDataSetChanged();
-                return false;
+            public void loadMore() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadMoreData();
+                        mPullRefreshLayout.stopLoadMore();
+                    }
+                }, 3000);
             }
         });
-//        mPullRefreshLayout.setPullRefreshInterface(new PullRefreshLayout.PullRefreshInterface() {
-//            @Override
-//            public boolean isCanPull() {
-//                if(mListView.getFirstVisiblePosition() !=0){
-//                    return false;
-//                }
-//
-//                return mListView.getChildCount() > 0 ? mListView.getChildAt(0).getTop() == 0 : true;
-//            }
-//
-//            @Override
-//            public void refresh() {
-//                startRefresh();
-//            }
-//        });
 
-        showData(20);
-    }
-
-//    public void startRefresh(){
-//        new Thread(){
+//        mPullRefreshLayout.postDelayed(new Runnable() {
 //            @Override
 //            public void run() {
-//                try {
-//                    Thread.sleep(3000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        mPullRefreshLayout.stopRefresh();
-//                        showData(50);
-//                    }
-//                });
+//                mPullRefreshLayout.startRefresh();
 //            }
-//        }.start();
-//    }
-//
-//    public void onStopRefresh(View view) {
-//        mPullRefreshLayout.stopRefresh();
-//    }
+//        },300);
+    }
 
-    public void showData(int count){
+    public void showData(int count) {
         String[] names = new String[count];
         for (int i = 1; i <= names.length; i++) {
             names[i - 1] = i + "";
         }
-        mArrayAdapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_list_item_1, names);
+        if (mArrayAdapter == null) {
+            mArrayAdapter = new ArrayAdapter<>(
+                    this, android.R.layout.simple_list_item_1);
+        }else {
+            mArrayAdapter.clear();
+        }
+        mArrayAdapter.addAll(names);
         mListView.setAdapter(mArrayAdapter);
+    }
+
+    public void loadMoreData(){
+        String[] names = new String[3];
+        for (int i = 1; i <= names.length; i++) {
+            names[i - 1] = i + "+load";
+        }
+        mArrayAdapter.addAll(names);
+
     }
 }
