@@ -60,7 +60,7 @@ public class PullRefreshLayoutActivity extends AppBaseActivity {
                 }
                 View lastVisibleItemView = mListView.getChildAt(mListView.getChildCount() - 1);
                 if (lastVisibleItemView != null && lastVisibleItemView.getBottom() == mListView.getHeight()) {
-//                    mPullRefreshLayout.startLoadMore();
+                    mPullRefreshLayout.startLoadMore();
                 }
             }
         });
