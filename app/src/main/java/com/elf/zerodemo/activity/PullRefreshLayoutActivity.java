@@ -67,6 +67,8 @@ public class PullRefreshLayoutActivity extends AppBaseActivity {
 //        mListView.addFooterView(new LoadMoreWidget(this));
 
         mPullRefreshLayout = (PullRefreshLayout) findViewById(R.id.pullRefreshLayout);
+        mPullRefreshLayout.setEnableLoadMore(true);
+        mPullRefreshLayout.setEnableRefresh(true);
         mPullRefreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
             public boolean canPull() {

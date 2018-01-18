@@ -22,6 +22,7 @@ public class PullRefreshLayout extends TouchEventLayout {
     private final static int status_down_pull = 1;
     private final static int status_up_pull = 2;
 
+    private boolean mEnableRefresh, mEnableLoadMore;
     private PullUIHandler mHeaderUIHandler, mFooterHandler;
 
     private View mHeaderView, mFooterView, mContentView;
@@ -42,7 +43,10 @@ public class PullRefreshLayout extends TouchEventLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mContentView = getChildAt(0);
+
+        if (getChildCount() > 0) {
+            mContentView = getChildAt(0);
+        }
 
         DefaultPullRefreshHeader header = new DefaultPullRefreshHeader(getContext());
         DefaultPullRefreshHeader footer = new DefaultPullRefreshHeader(getContext());
@@ -63,7 +67,9 @@ public class PullRefreshLayout extends TouchEventLayout {
         if (mHeaderView != null) {
             mHeaderView.layout(0, mTop - mHeaderView.getMeasuredHeight(), mHeaderView.getMeasuredWidth(), mTop);
         }
-        mContentView.layout(0, mTop, mContentView.getMeasuredWidth(), mTop + getMeasuredHeight());
+        if (mContentView != null) {
+            mContentView.layout(0, mTop, mContentView.getMeasuredWidth(), mTop + getMeasuredHeight());
+        }
         if (mHeaderUIHandler != null) {
             mFooterView.layout(0, mTop + getMeasuredHeight(), mFooterView.getMeasuredWidth(), mTop + getMeasuredHeight() + mFooterView.getMeasuredHeight());
         }
@@ -76,11 +82,11 @@ public class PullRefreshLayout extends TouchEventLayout {
     }
 
     public void startRefresh() {
-        if (mRefreshing || mLoading) {
+        if (!mEnableRefresh || mRefreshing || mLoading) {
             return;
         }
         mRefreshing = true;
-        mHeaderUIHandler.onRefreshBegin();  //((TextView) mHeaderView).setText("正在刷新");
+        mHeaderUIHandler.onRefreshBegin();
         viewAnim(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,12 +98,12 @@ public class PullRefreshLayout extends TouchEventLayout {
     }
 
     public void startLoadMore() {
-        if (mRefreshing || mLoading) {
+        if (!mEnableLoadMore || mRefreshing || mLoading) {
             return;
         }
 
         mLoading = true;
-        mFooterHandler.onRefreshBegin(); // ((TextView) mFooterView).setText("正在加载");
+        mFooterHandler.onRefreshBegin();
         viewAnim(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -152,13 +158,13 @@ public class PullRefreshLayout extends TouchEventLayout {
         //正在刷新时
         if (mRefreshing) {
             if (mStatus == status_idle) {
-                if (offsetY > 0 && mOnRefreshListener != null && mOnRefreshListener.canPull()) {
+                if (offsetY > 0 && mEnableRefresh && mOnRefreshListener != null && mOnRefreshListener.canPull()) {
                     offsetView((int) offsetY);
                     sendCancelEvent(ev);
                     mStatus = status_down_pull;
                     return true;
                 }
-                if (offsetY < 0 && mContentView.getTop() > 0) {
+                if (offsetY < 0 && mEnableLoadMore && mContentView.getTop() > 0) {
                     offsetView((int) offsetY);
                     sendCancelEvent(ev);
                     mStatus = status_down_pull;
@@ -215,12 +221,12 @@ public class PullRefreshLayout extends TouchEventLayout {
 
         //正常情况下
         if (mStatus == status_idle) {
-            if (offsetY > 0 && mOnRefreshListener != null && mOnRefreshListener.canPull()) {
+            if (offsetY > 0 && mEnableRefresh && mOnRefreshListener != null && mOnRefreshListener.canPull()) {
                 offsetView((int) offsetY);
                 sendCancelEvent(ev);
                 mStatus = status_down_pull;
                 return true;
-            } else if (offsetY < 0 && mOnLoadMoreListener != null && mOnLoadMoreListener.canPull()) {
+            } else if (offsetY < 0 && mEnableLoadMore && mOnLoadMoreListener != null && mOnLoadMoreListener.canPull()) {
                 offsetView((int) offsetY);
                 sendCancelEvent(ev);
                 mStatus = status_up_pull;
@@ -358,7 +364,8 @@ public class PullRefreshLayout extends TouchEventLayout {
      * @return true可以 false不可以
      */
     private boolean canRefresh() {
-        return mContentView.getTop() > mHeaderView.getMeasuredHeight();
+        return mEnableRefresh && mContentView != null && mHeaderView != null &&
+                mContentView.getTop() > mHeaderView.getMeasuredHeight();
     }
 
     /**
@@ -367,7 +374,8 @@ public class PullRefreshLayout extends TouchEventLayout {
      * @return true可以 false不可以
      */
     private boolean canLoadMore() {
-        return mContentView.getBottom() + mFooterView.getMeasuredHeight() < getMeasuredHeight();
+        return mEnableLoadMore && mContentView != null && mFooterView != null &&
+                mContentView.getBottom() + mFooterView.getMeasuredHeight() < getMeasuredHeight();
     }
 
     /**
@@ -388,6 +396,43 @@ public class PullRefreshLayout extends TouchEventLayout {
     private void sendDownEvent(MotionEvent ev) {
         ev.setAction(MotionEvent.ACTION_DOWN);
         super.dispatchTouchEvent(ev);
+    }
+
+    /**
+     * 移动内容控件
+     *
+     * @param offset 偏移量
+     */
+    private void offsetView(int offset) {
+        mContentView.offsetTopAndBottom(offset);
+        mHeaderView.offsetTopAndBottom(offset);
+        mFooterView.offsetTopAndBottom(offset);
+
+        mTop = mContentView.getTop();
+
+        if (mRefreshing || mLoading) {
+            return;
+        }
+
+        if (canRefresh()) {
+            mHeaderUIHandler.onRefreshPrepare();
+        } else {
+            mHeaderUIHandler.onNormal();
+        }
+
+        if (canLoadMore()) {
+            mFooterHandler.onRefreshPrepare();
+        } else {
+            mFooterHandler.onNormal();
+        }
+    }
+
+    public void setEnableRefresh(boolean enable) {
+        mEnableRefresh = enable;
+    }
+
+    public void setEnableLoadMore(boolean enable) {
+        mEnableLoadMore = enable;
     }
 
     /**
@@ -419,35 +464,6 @@ public class PullRefreshLayout extends TouchEventLayout {
     public void setHeaderAndFooterUIHandler(PullUIHandler headerHandler, PullUIHandler footerHandler) {
         mHeaderUIHandler = headerHandler;
         mFooterHandler = footerHandler;
-    }
-
-    /**
-     * 移动内容控件
-     *
-     * @param offset 偏移量
-     */
-    private void offsetView(int offset) {
-        mContentView.offsetTopAndBottom(offset);
-        mHeaderView.offsetTopAndBottom(offset);
-        mFooterView.offsetTopAndBottom(offset);
-
-        mTop = mContentView.getTop();
-
-        if (mRefreshing || mLoading) {
-            return;
-        }
-
-        if (canRefresh()) {
-            mHeaderUIHandler.onRefreshPrepare();  // ((TextView) mHeaderView).setText("松手刷新");
-        } else {
-            mHeaderUIHandler.onNormal();  //((TextView) mHeaderView).setText("下拉刷新");
-        }
-
-        if (canLoadMore()) {
-            mFooterHandler.onRefreshPrepare();  //((TextView) mFooterView).setText("松手加载");
-        } else {
-            mFooterHandler.onNormal();  //((TextView) mFooterView).setText("上拉加载");
-        }
     }
 
     /**
