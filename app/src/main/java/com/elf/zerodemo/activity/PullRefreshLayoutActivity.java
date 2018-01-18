@@ -50,6 +50,18 @@ public class PullRefreshLayoutActivity extends AppBaseActivity {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 LogUtils.v(TAG, "--onScroll--");
+
+                if(mArrayAdapter==null) {
+                    return;
+                }
+
+                if (mListView.getLastVisiblePosition() != mArrayAdapter.getCount() - 1) {
+                    return;
+                }
+                View lastVisibleItemView = mListView.getChildAt(mListView.getChildCount() - 1);
+                if (lastVisibleItemView != null && lastVisibleItemView.getBottom() == mListView.getHeight()) {
+//                    mPullRefreshLayout.startLoadMore();
+                }
             }
         });
 //        mListView.addFooterView(new LoadMoreWidget(this));
