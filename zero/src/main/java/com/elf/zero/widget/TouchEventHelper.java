@@ -21,6 +21,7 @@ public class TouchEventHelper {
      */
     public boolean dispatchTouchEvent(MotionEvent ev) {
         switch (ev.getAction()) {
+            case MotionEvent.ACTION_POINTER_DOWN:
             case MotionEvent.ACTION_DOWN:
                 mDownPoint.set(ev.getX(), ev.getY());
                 mLastPoint.set(ev.getX(), ev.getY());
