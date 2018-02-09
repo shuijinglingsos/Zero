@@ -2,11 +2,16 @@ package com.elf.zero.utils;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+
+import java.io.File;
 import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.List;
@@ -135,5 +140,53 @@ public class DeviceUtils {
      */
     public static int getScreenHeight() {
         return mContext.getResources().getDisplayMetrics().heightPixels;
+    }
+
+    /**
+     * dp 转 px
+     *
+     * @param dp dp值
+     * @return px 值
+     */
+    public int dpToPx(int dp) {
+        DisplayMetrics displayMetrics = mContext.getResources().getDisplayMetrics();
+        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
+    /**
+     * pz 转 dp
+     *
+     * @param px px值
+     * @return dp值
+     */
+    public int pxToDp(int px) {
+        DisplayMetrics displayMetrics = mContext.getResources().getDisplayMetrics();
+        return Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
+    /**
+     * 安装 apk
+     *
+     * @param file 文件地址
+     */
+    public static void installAPK(File file) {
+        if (file == null || !file.exists())
+            return;
+        Intent intent = new Intent();
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+        mContext.startActivity(intent);
+    }
+
+    /**
+     * 卸载指定包名的app
+     *
+     * @param packageName 包名
+     */
+    public static void uninstallApp(String packageName) {
+        Uri packageURI = Uri.parse("package:" + packageName);
+        Intent intent = new Intent(Intent.ACTION_DELETE, packageURI);
+        mContext.startActivity(intent);
     }
 }
