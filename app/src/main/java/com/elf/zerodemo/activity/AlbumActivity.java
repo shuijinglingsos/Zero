@@ -3,6 +3,7 @@ package com.elf.zerodemo.activity;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -42,6 +43,7 @@ public class AlbumActivity extends AppBaseActivity {
     private int mSelectedMaxNum = 9;
 
     private AlbumDataSource mAlbumDataSource;
+    private AlbumFolder mShowAlbumFolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +53,7 @@ public class AlbumActivity extends AppBaseActivity {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            String[] permission = { Manifest.permission.READ_EXTERNAL_STORAGE };
+            String[] permission = {Manifest.permission.READ_EXTERNAL_STORAGE};
             ActivityCompat.requestPermissions(this, permission, 1);
             return;
         }
@@ -96,12 +98,12 @@ public class AlbumActivity extends AppBaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                if(mAlbumFileListAdapter.getCount()>0) {
-                    String[] paths = new String[mAlbumFileListAdapter.getCount()];
-                    for (int i = 0; i < paths.length; i++) {
-                        paths[i] = mAlbumFileListAdapter.getItem(i).path;
-                    }
-                    openGalleryDialog(paths,position);
+                if (mAlbumFileListAdapter.getCount() > 0) {
+//                    List<AlbumFile> paths = new ArrayList<>();
+//                    for (int i = 0; i < paths.length; i++) {
+//                        paths.add(mAlbumFileListAdapter.getItem(i));
+//                    }
+                    openGalleryDialog(mShowAlbumFolder.albumFiles, position);
                 }
             }
         });
@@ -224,12 +226,7 @@ public class AlbumActivity extends AppBaseActivity {
             showToast("未选中项目");
             return;
         }
-        String[] paths = new String[mSelectedFiles.size()];
-        for (int i = 0; i < paths.length; i++) {
-            paths[i] = mSelectedFiles.get(i).path;
-        }
-
-        openGalleryDialog(paths, 0);
+        openGalleryDialog(mSelectedFiles, 0);
     }
 
     /**
@@ -256,6 +253,7 @@ public class AlbumActivity extends AppBaseActivity {
      * @param folder 文件夹
      */
     private void showAlbumFiles(AlbumFolder folder) {
+        mShowAlbumFolder = folder;
         mBtnFolder.setText(folder.name);
         mAlbumFileListAdapter.clear();
         mAlbumFileListAdapter.addAll(folder.albumFiles);
@@ -271,13 +269,23 @@ public class AlbumActivity extends AppBaseActivity {
         mLvFolder.setAdapter(mAlbumFolderListAdapter);
     }
 
-    private void openGalleryDialog(String[] paths , int position) {
-        GalleryActivity.open(this, paths, position);
+    private void openGalleryDialog(List<AlbumFile> paths, int position) {
+        GalleryActivity.open(this, paths, mSelectedFiles, mSelectedMaxNum, position, 0);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         showData();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 0) {
+            mAlbumFileListAdapter.notifyDataSetChanged();
+            mBtnSend.setText("发送" + "(" + mSelectedFiles.size() + ")");
+        }
     }
 }
