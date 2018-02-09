@@ -26,6 +26,8 @@ public class GalleryActivity extends AppBaseActivity {
     private TextView mTvPageNumber;
     private ImageView mIvCheck;
 
+    private GalleryAdapter mGalleryAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,8 +36,8 @@ public class GalleryActivity extends AppBaseActivity {
         initView();
         int position = getIntent().getIntExtra(ARG_POSITION, 0);
 
-        GalleryAdapter adapter = new GalleryAdapter(this.getSupportFragmentManager(), mAlbumFiles);
-        mViewPager.setAdapter(adapter);
+        mGalleryAdapter = new GalleryAdapter(this.getSupportFragmentManager(), mAlbumFiles);
+        mViewPager.setAdapter(mGalleryAdapter);
 
         showPageNumber(position);
         mViewPager.setCurrentItem(position, false);
@@ -82,6 +84,8 @@ public class GalleryActivity extends AppBaseActivity {
                         showToast("最多选中 " + mMaxSelected + " 项");
                     }
                 }
+
+                mGalleryAdapter.notifyDataSetChanged();
             }
         });
     }

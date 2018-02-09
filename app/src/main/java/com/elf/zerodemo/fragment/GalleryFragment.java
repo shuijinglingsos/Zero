@@ -1,21 +1,21 @@
 package com.elf.zerodemo.fragment;
 
-import android.animation.ArgbEvaluator;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.text.TextUtilsCompat;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.ImageViewState;
@@ -25,7 +25,7 @@ import com.elf.zero.utils.LogUtils;
 import com.elf.zerodemo.R;
 import com.elf.zerodemo.model.AlbumFile;
 
-import java.io.File;
+import pl.droidsonroids.gif.GifDrawable;
 
 /**
  *
@@ -41,8 +41,9 @@ public class GalleryFragment extends Fragment {
     private final static float mDoubleClickScale = 2;
     private final static int mZoomDuration = 250;
 
+    private ViewGroup mRootView;
+
     private AlbumFile mAlbumFile;
-    private SubsamplingScaleImageView mImageView;
 
     public static Fragment get(AlbumFile albumFile) {
         Bundle bundle = new Bundle();
@@ -62,15 +63,8 @@ public class GalleryFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.fragment_gallery, container, false);
-
-        mImageView = view.findViewById(R.id.iv_scale);
-        mImageView.setDoubleTapZoomDuration(mZoomDuration);
-        mImageView.setDoubleTapZoomScale(mDoubleClickScale);
-        mImageView.setMaxScale(mMaxScale);
-
-        return view;
+        mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_gallery, container, false);
+        return mRootView;
     }
 
     @Override
@@ -81,58 +75,104 @@ public class GalleryFragment extends Fragment {
             return;
         }
 
-        Glide.with(getActivity())
-                .load(mAlbumFile.path)
-                .asBitmap()
-                .centerCrop()
-                .into(new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                        showImage(resource);
-                    }
+        if (getContext() == null) {
+            return;
+        }
 
-                    @Override
-                    public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                        LogUtils.v(TAG, e.getMessage());
-                    }
-                });
+        if (TextUtils.isEmpty(mAlbumFile.path)) {
+            return;
+        }
 
+        LogUtils.v(TAG, "--图片地址：" + mAlbumFile.path);
 
-//        try {
-//            ImageSource imageSource = ImageSource.uri(Uri.fromFile(new File(mAlbumFile.path)));
-//            Bitmap bitmap = BitmapFactory.decodeFile(mAlbumFile.path);
-//            int screenWidth = DeviceUtils.getScreenWidth();
-//            if (bitmap.getHeight() > bitmap.getWidth() * 3) {  //长图
-//                mImageView.setImage(imageSource, new ImageViewState(1.0F, new PointF(0, 0), 0));
-//                mImageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP);
-//            } else if (screenWidth > bitmap.getWidth()) {
-//                float scale = (float) screenWidth / bitmap.getWidth();
-//                mImageView.setImage(imageSource, new ImageViewState(scale, new PointF(0, 0), 0));
-//                mImageView.setMaxScale(scale * mMaxScale);
-//                mImageView.setDoubleTapZoomScale(scale * mDoubleClickScale);
-//            } else {
-//                mImageView.setImage(imageSource);
-//                mImageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        if (mAlbumFile.path.endsWith(".gif")) {
+
+            try {
+                GifDrawable gifDrawable = new GifDrawable(mAlbumFile.path);
+                ImageView imageView = new ImageView(getContext());
+                imageView.setImageDrawable(gifDrawable);
+                mRootView.addView(imageView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+//            Glide.with(getContext())
+//                    .load(mAlbumFile.path)
+//                    .asBitmap()
+//                    .into(new SimpleTarget<Bitmap>() {
+//                        @Override
+//                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+//                            if (getContext() != null) {
+//                                showImage(resource);
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onLoadFailed(Exception e, Drawable errorDrawable) {
+//                            LogUtils.v(TAG, e.getMessage());
+//                        }
+//                    });
+        } else {
+            showImage(mAlbumFile.path);
+        }
     }
 
     private void showImage(Bitmap bitmap) {
+
+        SubsamplingScaleImageView imageView = new SubsamplingScaleImageView(getContext());
+        imageView.setDoubleTapZoomDuration(mZoomDuration);
+        imageView.setDoubleTapZoomScale(mDoubleClickScale);
+        imageView.setMaxScale(mMaxScale);
+
         ImageSource imageSource = ImageSource.bitmap(bitmap);
         int screenWidth = DeviceUtils.getScreenWidth();
         if (bitmap.getHeight() > bitmap.getWidth() * 3) {  //长图
-            mImageView.setImage(imageSource, new ImageViewState(1.0F, new PointF(0, 0), 0));
-            mImageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP);
+            imageView.setImage(imageSource, new ImageViewState(1.0F, new PointF(0, 0), 0));
+            imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP);
         } else if (screenWidth > bitmap.getWidth()) {
             float scale = (float) screenWidth / bitmap.getWidth();
-            mImageView.setImage(imageSource, new ImageViewState(scale, new PointF(0, 0), 0));
-            mImageView.setMaxScale(scale * mMaxScale);
-            mImageView.setDoubleTapZoomScale(scale * mDoubleClickScale);
+            imageView.setImage(imageSource, new ImageViewState(scale, new PointF(0, 0), 0));
+            imageView.setMaxScale(scale * mMaxScale);
+            imageView.setDoubleTapZoomScale(scale * mDoubleClickScale);
         } else {
-            mImageView.setImage(imageSource);
-            mImageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE);
+            imageView.setImage(imageSource);
+            imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE);
         }
+
+        mRootView.addView(imageView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+    }
+
+
+    private void showImage(String path) {
+
+        SubsamplingScaleImageView imageView = new SubsamplingScaleImageView(getContext());
+        imageView.setDoubleTapZoomDuration(mZoomDuration);
+        imageView.setDoubleTapZoomScale(mDoubleClickScale);
+        imageView.setMaxScale(mMaxScale);
+
+        ImageSource imageSource = ImageSource.uri(path);
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;//这个参数设置为true才有效，
+        BitmapFactory.decodeFile(path, options);//这里的bitmap是个空
+
+        int widget = options.outWidth;
+        int height = options.outHeight;
+
+        int screenWidth = DeviceUtils.getScreenWidth();
+        if (height > widget * 3) {  //长图
+            imageView.setImage(imageSource, new ImageViewState(1.0F, new PointF(0, 0), 0));
+            imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP);
+        } else if (screenWidth > widget) {
+            float scale = (float) screenWidth / widget;
+            imageView.setImage(imageSource, new ImageViewState(scale, new PointF(0, 0), 0));
+            imageView.setMaxScale(scale * mMaxScale);
+            imageView.setDoubleTapZoomScale(scale * mDoubleClickScale);
+        } else {
+            imageView.setImage(imageSource);
+            imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE);
+        }
+
+        mRootView.addView(imageView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
     }
 }
