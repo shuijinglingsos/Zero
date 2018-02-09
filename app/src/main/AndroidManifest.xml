@@ -42,6 +42,10 @@
         <activity android:name=".activity.GalleryActivity" />
         <activity android:name=".activity.CrashHandlerActivity" />
         <activity android:name=".activity.NineGridLayoutActivity" />
+        <activity android:name=".activity.NestedScrollingActivity" />
+        <activity android:name=".activity.CoordinatorLayoutActivity" />
+        <activity android:name=".activity.ScrollerActivity" />
+        <activity android:name=".activity.GesturePasswordActivity" />
     </application>
 
 </manifest>

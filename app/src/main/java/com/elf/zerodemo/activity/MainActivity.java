@@ -8,7 +8,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.elf.zero.Zero;
 import com.elf.zerodemo.R;
 
 /**
@@ -29,8 +28,12 @@ public class MainActivity extends AppBaseActivity {
             "FlowLayout",
             "NineGridLayout",
             "PullRefreshLayout",
+            "Scroller",
+            "NestedScrolling",
+            "CoordinatorLayout",
             "Album",
 //            "Gallery",
+            "GesturePassword",
             "CrashHandler",
             "About"
     };
@@ -47,8 +50,12 @@ public class MainActivity extends AppBaseActivity {
             FlowLayoutActivity.class,
             NineGridLayoutActivity.class,
             PullRefreshLayoutActivity.class,
+            ScrollerActivity.class,
+            NestedScrollingActivity.class,
+            CoordinatorLayoutActivity.class,
             AlbumActivity.class,
 //            GalleryActivity.class,
+            GesturePasswordActivity.class,
             CrashHandlerActivity.class,
             AboutActivity.class
     };

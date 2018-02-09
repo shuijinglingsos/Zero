@@ -10,6 +10,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.elf.zero.utils.DeviceUtils;
+import com.elf.zero.utils.FlymeUtils;
+import com.elf.zero.utils.MiUIUtils;
 import com.elf.zerodemo.R;
 
 public class DeviceUtilsActivity extends AppBaseActivity {
@@ -47,6 +49,9 @@ public class DeviceUtilsActivity extends AppBaseActivity {
         sb.append("\n运营商名称：").append(DeviceUtils.getNetworkOperatorName());
         sb.append("\n是否支持NFC：").append(DeviceUtils.isSupportNFC());
         sb.append("\n分辨率：").append(DeviceUtils.getScreenWidth()).append("x").append(DeviceUtils.getScreenHeight());
+
+        sb.append("\n\n是否是MIUI：").append(MiUIUtils.isMiUI());
+        sb.append("\n是否是Flyme：").append(FlymeUtils.isFlyme());
 
         ((TextView) findViewById(R.id.textView)).setText(sb.toString());
     }

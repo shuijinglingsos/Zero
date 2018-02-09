@@ -86,36 +86,40 @@ public class CrashHandler implements UncaughtExceptionHandler {
 	 */
 	@Override
 	public void uncaughtException(Thread thread, Throwable ex) {
-		if (!handleException(ex) && mDefaultHandler != null) {
-			// 如果用户没有处理则让系统默认的异常处理器来处理
+		handleException(ex);
+		if(mDefaultHandler != null){
 			mDefaultHandler.uncaughtException(thread, ex);
-		} else {
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				Log.e(TAG, "error : ", e);
-			}
-
-			// 退出程序
-			android.os.Process.killProcess(android.os.Process.myPid());
-			System.exit(1);
 		}
+//		if (!handleException(ex) && mDefaultHandler != null) {
+//			// 如果用户没有处理则让系统默认的异常处理器来处理
+//			mDefaultHandler.uncaughtException(thread, ex);
+//		} else {
+//			try {
+//				Thread.sleep(3000);
+//			} catch (InterruptedException e) {
+//				Log.e(TAG, "error : ", e);
+//			}
+//
+//			// 退出程序
+//			android.os.Process.killProcess(android.os.Process.myPid());
+//			System.exit(1);
+//		}
 	}
 
 	private boolean handleException(Throwable ex) {
 		if (ex == null) {
 			return false;
 		}
-		final String msg = ex.getLocalizedMessage();
+//		final String msg = ex.getLocalizedMessage();
 		// 使用 Toast 来显示异常信息
-		new Thread() {
-			@Override
-			public void run() {
-				Looper.prepare();
-				Toast.makeText(mContext, String.format("很抱歉，程序出现异常：(%s)", !TextUtils.isEmpty(msg) ? msg : "null"), Toast.LENGTH_LONG).show();
-				Looper.loop();
-			}
-		}.start();
+//		new Thread() {
+//			@Override
+//			public void run() {
+//				Looper.prepare();
+//				Toast.makeText(mContext, String.format("很抱歉，程序出现异常：(%s)", !TextUtils.isEmpty(msg) ? msg : "null"), Toast.LENGTH_LONG).show();
+//				Looper.loop();
+//			}
+//		}.start();
 
 		// 收集设备参数信息
 		collectDeviceInfo(mContext);
@@ -125,19 +129,6 @@ public class CrashHandler implements UncaughtExceptionHandler {
 	}
 
 	public void collectDeviceInfo(Context ctx) {
-		try {
-			PackageManager pm = ctx.getPackageManager();
-			PackageInfo pi = pm.getPackageInfo(ctx.getPackageName(), PackageManager.GET_ACTIVITIES);
-
-			if (pi != null) {
-				String versionName = pi.versionName == null ? "null" : pi.versionName;
-				String versionCode = pi.versionCode + "";
-				infos.put("versionName", versionName);
-				infos.put("versionCode", versionCode);
-			}
-		} catch (NameNotFoundException e) {
-			Log.e(TAG, "an error occured when collect package info", e);
-		}
 
 		Field[] fields = Build.class.getDeclaredFields();
 		for (Field field : fields) {
@@ -154,9 +145,23 @@ public class CrashHandler implements UncaughtExceptionHandler {
 	private String saveCrashInfoToFile(Throwable ex) {
 		StringBuffer sb = new StringBuffer();
 		Date nowtime = new Date();
-		sb.append("\n\n\n");
+		sb.append("\n\n");
 		sb.append(myLogSdf.format(nowtime));
 		sb.append("\n");
+
+		try {
+			PackageManager pm = mContext.getPackageManager();
+			PackageInfo pi = pm.getPackageInfo(mContext.getPackageName(), PackageManager.GET_ACTIVITIES);
+			if (pi != null) {
+				String versionName = pi.versionName == null ? "null" : pi.versionName;
+				String versionCode = pi.versionCode + "";
+				sb.append("versionName=").append(versionName).append("\n");
+				sb.append("versionCode=").append(versionCode).append("\n");
+			}
+		} catch (NameNotFoundException e) {
+			Log.e(TAG, "an error occured when collect package info", e);
+		}
+
 		for (Map.Entry<String, String> entry : infos.entrySet()) {
 			String key = entry.getKey();
 			String value = entry.getValue();
