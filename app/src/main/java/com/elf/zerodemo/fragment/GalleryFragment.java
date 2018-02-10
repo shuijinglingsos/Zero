@@ -1,13 +1,10 @@
 package com.elf.zerodemo.fragment;
 
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.text.TextUtilsCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.ImageViewState;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
@@ -83,65 +78,32 @@ public class GalleryFragment extends Fragment {
             return;
         }
 
-        LogUtils.v(TAG, "--图片地址：" + mAlbumFile.path);
+        if (mAlbumFile.fileType == AlbumFile.TYPE_IMAGE) {  //图片
+            LogUtils.v(TAG, "--图片地址：" + mAlbumFile.path);
+            if (mAlbumFile.path.endsWith(".gif")) {  //gif
+                try {
+                    GifDrawable gifDrawable = new GifDrawable(mAlbumFile.path);
+                    ImageView imageView = new ImageView(getContext());
+                    imageView.setImageDrawable(gifDrawable);
+                    mRootView.addView(imageView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
 
-        if (mAlbumFile.path.endsWith(".gif")) {
-
-            try {
-                GifDrawable gifDrawable = new GifDrawable(mAlbumFile.path);
-                ImageView imageView = new ImageView(getContext());
-                imageView.setImageDrawable(gifDrawable);
-                mRootView.addView(imageView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            } else {
+                showImage(mAlbumFile.path);
             }
+        } else {  //视频
+            LogUtils.v(TAG, "--视频地址：" + mAlbumFile.path);
+            ImageView imageView = new ImageView(getContext());
+            mRootView.addView(imageView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-//            Glide.with(getContext())
-//                    .load(mAlbumFile.path)
-//                    .asBitmap()
-//                    .into(new SimpleTarget<Bitmap>() {
-//                        @Override
-//                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-//                            if (getContext() != null) {
-//                                showImage(resource);
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onLoadFailed(Exception e, Drawable errorDrawable) {
-//                            LogUtils.v(TAG, e.getMessage());
-//                        }
-//                    });
-        } else {
-            showImage(mAlbumFile.path);
+            Glide.with(getContext())
+                    .load(mAlbumFile.path)
+                    .asBitmap()
+                    .into(imageView);
         }
     }
-
-    private void showImage(Bitmap bitmap) {
-
-        SubsamplingScaleImageView imageView = new SubsamplingScaleImageView(getContext());
-        imageView.setDoubleTapZoomDuration(mZoomDuration);
-        imageView.setDoubleTapZoomScale(mDoubleClickScale);
-        imageView.setMaxScale(mMaxScale);
-
-        ImageSource imageSource = ImageSource.bitmap(bitmap);
-        int screenWidth = DeviceUtils.getScreenWidth();
-        if (bitmap.getHeight() > bitmap.getWidth() * 3) {  //长图
-            imageView.setImage(imageSource, new ImageViewState(1.0F, new PointF(0, 0), 0));
-            imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP);
-        } else if (screenWidth > bitmap.getWidth()) {
-            float scale = (float) screenWidth / bitmap.getWidth();
-            imageView.setImage(imageSource, new ImageViewState(scale, new PointF(0, 0), 0));
-            imageView.setMaxScale(scale * mMaxScale);
-            imageView.setDoubleTapZoomScale(scale * mDoubleClickScale);
-        } else {
-            imageView.setImage(imageSource);
-            imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE);
-        }
-
-        mRootView.addView(imageView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-    }
-
 
     private void showImage(String path) {
 

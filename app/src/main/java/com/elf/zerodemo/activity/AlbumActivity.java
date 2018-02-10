@@ -226,7 +226,10 @@ public class AlbumActivity extends AppBaseActivity {
             showToast("未选中项目");
             return;
         }
-        openGalleryDialog(mSelectedFiles, 0);
+
+        List<AlbumFile> list = new ArrayList<>();
+        list.addAll(mSelectedFiles);
+        openGalleryDialog(list, 0);
     }
 
     /**
