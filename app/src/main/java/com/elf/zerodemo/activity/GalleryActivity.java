@@ -2,10 +2,15 @@ package com.elf.zerodemo.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.elf.zerodemo.R;
@@ -23,8 +28,9 @@ public class GalleryActivity extends AppBaseActivity {
     private static int mMaxSelected = 0;
 
     private ViewPager mViewPager;
-    private TextView mTvPageNumber;
+    private TextView mTvPageNumber,mTvSelectedNumber;
     private ImageView mIvCheck;
+    private LinearLayout mLlSelected;
 
     private GalleryAdapter mGalleryAdapter;
 
@@ -32,7 +38,7 @@ public class GalleryActivity extends AppBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
-
+        transparentStatus();
         initView();
         int position = getIntent().getIntExtra(ARG_POSITION, 0);
 
@@ -40,10 +46,14 @@ public class GalleryActivity extends AppBaseActivity {
         mViewPager.setAdapter(mGalleryAdapter);
 
         showPageNumber(position);
+        showSelectedNumber();
         mViewPager.setCurrentItem(position, false);
     }
 
     private void initView() {
+        mLlSelected = (LinearLayout) findViewById(R.id.ll_selected);
+        mTvSelectedNumber = (TextView) findViewById(R.id.tv_select_number);
+        mIvCheck = (ImageView) findViewById(R.id.iv_check);
         mTvPageNumber = (TextView) findViewById(R.id.tv_page_number);
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
 
@@ -64,8 +74,7 @@ public class GalleryActivity extends AppBaseActivity {
             }
         });
 
-        mIvCheck = (ImageView) findViewById(R.id.iv_check);
-        mIvCheck.setOnClickListener(new View.OnClickListener() {
+        mLlSelected.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int position = mViewPager.getCurrentItem();
@@ -84,6 +93,7 @@ public class GalleryActivity extends AppBaseActivity {
                         showToast("最多选中 " + mMaxSelected + " 项");
                     }
                 }
+                showSelectedNumber();
 
                 mGalleryAdapter.notifyDataSetChanged();
             }
@@ -104,12 +114,32 @@ public class GalleryActivity extends AppBaseActivity {
         }
     }
 
+    private void showSelectedNumber(){
+        mTvSelectedNumber.setText(String.valueOf(mSelected.size()));
+    }
+
     @Override
     protected void onDestroy() {
         mAlbumFiles = null;
         mSelected = null;
         mMaxSelected = 0;
         super.onDestroy();
+    }
+
+    private void transparentStatus(){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+//                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                     View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            );
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.TRANSPARENT);
+//            window.setNavigationBarColor(Color.TRANSPARENT);
+        }
     }
 
     public static void open(Activity context, List<AlbumFile> paths, List<AlbumFile> selected,

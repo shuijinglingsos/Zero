@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.elf.zero.utils.DateTimeUtils;
 import com.elf.zero.utils.LogUtils;
 import com.elf.zero.widget.AbsLinearLayout;
 import com.elf.zerodemo.R;
@@ -19,7 +20,7 @@ import com.elf.zerodemo.model.AlbumFile;
  */
 public class AlbumFileListItem extends AbsLinearLayout {
 
-    private ImageView mImageView, mIvCheck;
+    private ImageView mImageView, mIvCheck, mIvVideo;
     private TextView mTextView;
     private View mViewCheckShade;
 
@@ -41,6 +42,7 @@ public class AlbumFileListItem extends AbsLinearLayout {
     @Override
     protected void initView(AttributeSet attrs) {
         mImageView = getViewById(R.id.imageView);
+        mIvVideo = getViewById(R.id.iv_video);
         mTextView = getViewById(R.id.textView);
         mIvCheck = getViewById(R.id.iv_check);
         mViewCheckShade = getViewById(R.id.view_check_shade);
@@ -65,7 +67,7 @@ public class AlbumFileListItem extends AbsLinearLayout {
         mAlbumFile = data;
         LogUtils.v("Album", "mimeType : " + data.mimeType);
         if (AlbumFile.TYPE_IMAGE == mAlbumFile.fileType) {
-
+            mIvVideo.setVisibility(GONE);
             if (data.mimeType.contains("gif")) {
                 mTextView.setText("动图");
                 mTextView.setVisibility(VISIBLE);
@@ -78,7 +80,8 @@ public class AlbumFileListItem extends AbsLinearLayout {
                 mTextView.setVisibility(GONE);
             }
         } else if (AlbumFile.TYPE_VIDEO == mAlbumFile.fileType) {
-            mTextView.setText("视频 - " + data.duration);
+            mIvVideo.setVisibility(VISIBLE);
+            mTextView.setText(DateTimeUtils.toMinute(data.duration));
             mTextView.setVisibility(VISIBLE);
             Glide.with(getContext()).load(data.path).centerCrop().dontAnimate().skipMemoryCache(true)
                     .into(mImageView);
