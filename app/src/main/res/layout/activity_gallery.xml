@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="9/10"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textColor="#FFFFFF" />
 
         <LinearLayout
@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="9"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textColor="#FFFFFF" />
 
         </LinearLayout>
