@@ -1,6 +1,8 @@
 package com.elf.zero.utils;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
  * 日期工具类
@@ -14,7 +16,9 @@ public class DateTimeUtils {
     public final static int HOUR = 60 * MINUTE;
     public final static int DAY = 24 * HOUR;
 
-
+    public final static String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public final static String DATE_TIME_FORMAT2 = "yyyy-MM-dd HH:mm";
+    public final static String DATE_FORMAT = "yyyy-MM-dd";
 
     public static String toMinute(long milliSecond) {
         if (milliSecond < 0) {
