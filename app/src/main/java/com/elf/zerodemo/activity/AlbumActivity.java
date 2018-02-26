@@ -118,7 +118,7 @@ public class AlbumActivity extends AppBaseActivity {
                     public void run() {
                         onShowFolderList();
                     }
-                }, 400);
+                }, 300);
             }
         });
 
