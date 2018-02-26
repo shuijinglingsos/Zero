@@ -39,7 +39,7 @@ public class GalleryFragment extends Fragment {
 
     private final static String ARG_ALBUM_FILE = "arg_album_file";
 
-    private final static float mDoubleClickScale = 1.5f;
+    private final static float mDoubleClickScale = 2f;
     private final static int mZoomDuration = 250;
 
     private ViewGroup mRootView;
@@ -164,24 +164,24 @@ public class GalleryFragment extends Fragment {
 
         final SubsamplingScaleImageView imageView = new SubsamplingScaleImageView(getContext());
         imageView.setDoubleTapZoomDuration(mZoomDuration);
-        imageView.setDoubleTapZoomScale(mDoubleClickScale);
         imageView.setImage(imageSource);
         imageView.setOrientation(-1);
         //初始显示图片宽度与屏幕宽度一致
         float scale = (float) screenWidth / width;
-        imageView.setScaleAndCenter(scale, new PointF(0, 0));
-
+        imageView.setDoubleTapZoomScale(scale * mDoubleClickScale);
         if (height > width * 3) {
+            imageView.setScaleAndCenter(scale, new PointF(0, 0));
             //长图双击放到到与屏幕宽度一致
             imageView.setDoubleTapZoomScale(scale);
         } else if (screenWidth > width) {
+            imageView.setScaleAndCenter(scale, new PointF(0, 0));
             //图片宽度小于屏幕宽度  在显示宽度的基础上 设置最大宽度和双击放大scale
             imageView.setMaxScale(scale * imageView.getMaxScale());
-            imageView.setDoubleTapZoomScale(scale * mDoubleClickScale);
+//            imageView.setDoubleTapZoomScale(scale * mDoubleClickScale);
         }
 
         //初始显示高度小于屏幕高度的话 双击放大到高度与屏幕高度一致
-        if (scale * height < screenHeight) {
+        if (scale * height < screenHeight / 3 * 2) {
             imageView.setDoubleTapZoomScale((float) screenHeight / height);
         }
 
