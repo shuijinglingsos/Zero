@@ -174,6 +174,9 @@ public class GalleryFragment extends Fragment {
             //长图双击放到到与屏幕宽度一致
             imageView.setDoubleTapZoomScale(scale);
         } else if (screenWidth > width) {
+            if (height > width) {
+                scale = (float) screenHeight / height;
+            }
             imageView.setScaleAndCenter(scale, new PointF(0, 0));
             //图片宽度小于屏幕宽度  在显示宽度的基础上 设置最大宽度和双击放大scale
             imageView.setMaxScale(scale * imageView.getMaxScale());
