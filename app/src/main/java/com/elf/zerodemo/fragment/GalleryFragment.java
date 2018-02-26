@@ -39,6 +39,7 @@ public class GalleryFragment extends Fragment {
 
     private final static String ARG_ALBUM_FILE = "arg_album_file";
 
+    private final static float mMaxScale = 3f;
     private final static float mDoubleClickScale = 2f;
     private final static int mZoomDuration = 250;
 
@@ -106,7 +107,6 @@ public class GalleryFragment extends Fragment {
             mRootView.addView(imageView,
                     new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-
             Glide.with(getContext())
                     .load(mAlbumFile.path)
                     .asBitmap()
@@ -169,18 +169,20 @@ public class GalleryFragment extends Fragment {
         //初始显示图片宽度与屏幕宽度一致
         float scale = (float) screenWidth / width;
         imageView.setDoubleTapZoomScale(scale * mDoubleClickScale);
+        imageView.setMaxScale(scale < 1 ? mMaxScale : scale * mMaxScale);
+
         if (height > width * 3) {
             imageView.setScaleAndCenter(scale, new PointF(0, 0));
             //长图双击放到到与屏幕宽度一致
             imageView.setDoubleTapZoomScale(scale);
         } else if (screenWidth > width) {
-            if (height > width) {
+            //初始显示高度大于屏幕高度，则使用根据高度计算的scale
+            if (scale * height > screenHeight) {
                 scale = (float) screenHeight / height;
             }
             imageView.setScaleAndCenter(scale, new PointF(0, 0));
             //图片宽度小于屏幕宽度  在显示宽度的基础上 设置最大宽度和双击放大scale
-            imageView.setMaxScale(scale * imageView.getMaxScale());
-//            imageView.setDoubleTapZoomScale(scale * mDoubleClickScale);
+            imageView.setMaxScale(scale < 1 ? mMaxScale : scale * mMaxScale);
         }
 
         //初始显示高度小于屏幕高度的话 双击放大到高度与屏幕高度一致
