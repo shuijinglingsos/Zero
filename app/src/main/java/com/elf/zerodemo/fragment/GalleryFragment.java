@@ -21,7 +21,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.davemorrissey.labs.subscaleview.ImageSource;
-import com.davemorrissey.labs.subscaleview.ImageViewState;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.elf.zero.utils.DeviceUtils;
 import com.elf.zero.utils.LogUtils;
@@ -40,7 +39,6 @@ public class GalleryFragment extends Fragment {
 
     private final static String ARG_ALBUM_FILE = "arg_album_file";
 
-    private final static float mMaxScale = 3;
     private final static float mDoubleClickScale = 1.5f;
     private final static int mZoomDuration = 250;
 
@@ -140,11 +138,6 @@ public class GalleryFragment extends Fragment {
 
     private void showImage(String path) {
 
-        final SubsamplingScaleImageView imageView = new SubsamplingScaleImageView(getContext());
-        imageView.setDoubleTapZoomDuration(mZoomDuration);
-        imageView.setDoubleTapZoomScale(mDoubleClickScale);
-        imageView.setMaxScale(mMaxScale);
-
         final ImageSource imageSource = ImageSource.uri(path);
         //获取旋转角度
         boolean rotation = false;
@@ -164,24 +157,34 @@ public class GalleryFragment extends Fragment {
         options.inJustDecodeBounds = true;//这个参数设置为true才有效，
         BitmapFactory.decodeFile(path, options);//这里的bitmap是个空
         //需要旋转则交换宽高
-        int widget = rotation ? options.outHeight : options.outWidth;
+        int width = rotation ? options.outHeight : options.outWidth;
         int height = rotation ? options.outWidth : options.outHeight;
         int screenWidth = DeviceUtils.getScreenWidth();
-//        int screenHeight = DeviceUtils.getScreenHeight();
+        int screenHeight = DeviceUtils.getScreenHeight();
 
-        if (height > widget * 3) {  //长图
-            imageView.setImage(imageSource, new ImageViewState(1.0F, new PointF(0, 0), -1));
-            imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP);
-        } else if (screenWidth > widget) {  //图片宽度小于屏幕宽度，放大到屏幕宽度大小
-            float scale = (float) screenWidth / widget;
-            imageView.setImage(imageSource, new ImageViewState(scale, new PointF(0, 0), -1));
-            imageView.setMaxScale(scale * mMaxScale);
-            imageView.setDoubleTapZoomScale(scale * mDoubleClickScale);
-        } else {
-            imageView.setImage(imageSource);
-            imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE);
-        }
+        final SubsamplingScaleImageView imageView = new SubsamplingScaleImageView(getContext());
+        imageView.setDoubleTapZoomDuration(mZoomDuration);
+        imageView.setDoubleTapZoomScale(mDoubleClickScale);
+        imageView.setImage(imageSource);
         imageView.setOrientation(-1);
+        //初始显示图片宽度与屏幕宽度一致
+        float scale = (float) screenWidth / width;
+        imageView.setScaleAndCenter(scale, new PointF(0, 0));
+
+        if (height > width * 3) {
+            //长图双击放到到与屏幕宽度一致
+            imageView.setDoubleTapZoomScale(scale);
+        } else if (screenWidth > width) {
+            //图片宽度小于屏幕宽度  在显示宽度的基础上 设置最大宽度和双击放大scale
+            imageView.setMaxScale(scale * imageView.getMaxScale());
+            imageView.setDoubleTapZoomScale(scale * mDoubleClickScale);
+        }
+
+        //初始显示高度小于屏幕高度的话 双击放大到高度与屏幕高度一致
+        if (scale * height < screenHeight) {
+            imageView.setDoubleTapZoomScale((float) screenHeight / height);
+        }
+
         mRootView.addView(imageView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
