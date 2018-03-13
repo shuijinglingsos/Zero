@@ -1,6 +1,5 @@
 package com.elf.zero.image;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,6 +14,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
+import com.elf.zero.activity.BaseActivity;
 import com.elf.zero.utils.FileUtils;
 import com.elf.zero.utils.LogUtils;
 
@@ -25,7 +25,7 @@ import java.util.Calendar;
  * 选择图片
  * Created by Lidong on 2018/3/12.
  */
-public class ImageChooseActivity extends Activity {
+public class ImageChooseActivity extends BaseActivity {
 
     private final static String TAG = ImageChooseActivity.class.getSimpleName();
 
