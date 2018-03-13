@@ -33,6 +33,7 @@ public class MainActivity extends AppBaseActivity {
             "CoordinatorLayout",
             "Album",
 //            "Gallery",
+            "ImageChoose",
             "GesturePassword",
             "CrashHandler",
             "About"
@@ -55,6 +56,7 @@ public class MainActivity extends AppBaseActivity {
             CoordinatorLayoutActivity.class,
             AlbumActivity.class,
 //            GalleryActivity.class,
+            ImageChooseTestActivity.class,
             GesturePasswordActivity.class,
             CrashHandlerActivity.class,
             AboutActivity.class

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -188,5 +189,14 @@ public class DeviceUtils {
         Uri packageURI = Uri.parse("package:" + packageName);
         Intent intent = new Intent(Intent.ACTION_DELETE, packageURI);
         mContext.startActivity(intent);
+    }
+
+    /**
+     * 判断sd卡是否存在
+     * @return true存在 false不存在
+     */
+    public boolean existSDCard() {
+        return Environment.getExternalStorageState()
+                .equals(android.os.Environment.MEDIA_MOUNTED);
     }
 }
