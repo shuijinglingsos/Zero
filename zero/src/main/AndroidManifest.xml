@@ -11,6 +11,7 @@
         android:supportsRtl="true">
 
         <activity android:name=".image.ImageChooseActivity"
+            android:configChanges="orientation|screenSize"
             android:theme="@style/ZeroTheme.Translucent"/>
 
         <activity android:name=".image.AlbumActivity" />

@@ -45,7 +45,8 @@
         <activity android:name=".activity.CoordinatorLayoutActivity" />
         <activity android:name=".activity.ScrollerActivity" />
         <activity android:name=".activity.GesturePasswordActivity" />
-        <activity android:name=".activity.ImageChooseTestActivity" />
+        <activity android:name=".activity.ImageChooseTestActivity"
+            android:configChanges="orientation|screenSize" />
         <activity android:name=".activity.GroupListActivity" />
     </application>
 
