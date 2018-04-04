@@ -1,4 +1,4 @@
-package com.elf.zerodemo.activity;
+package com.elf.zero.image;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,13 +13,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.elf.zerodemo.R;
-import com.elf.zerodemo.adapter.GalleryAdapter;
-import com.elf.zerodemo.model.AlbumFile;
+import com.elf.zero.R;
+import com.elf.zero.activity.BaseActivity;
 
 import java.util.List;
 
-public class GalleryActivity extends AppBaseActivity {
+public class GalleryActivity extends BaseActivity {
 
     private final static String ARG_POSITION = "arg_position";
 
@@ -37,7 +36,7 @@ public class GalleryActivity extends AppBaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gallery);
+        setContentView(R.layout.zero_album_activity_gallery);
         transparentStatus();
         initView();
         int position = getIntent().getIntExtra(ARG_POSITION, 0);

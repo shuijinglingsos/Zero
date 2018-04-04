@@ -1,4 +1,4 @@
-package com.elf.zerodemo.model;
+package com.elf.zero.image;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -13,9 +13,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 相册数据源

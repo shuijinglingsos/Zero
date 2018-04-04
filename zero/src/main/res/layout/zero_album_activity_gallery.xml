@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#000000"
     android:orientation="vertical"
-    tools:context="com.elf.zerodemo.activity.GalleryActivity">
+    tools:context="com.elf.zero.image.GalleryActivity">
 
     <com.elf.zero.widget.ViewPagerFixed
         android:id="@+id/viewPager"

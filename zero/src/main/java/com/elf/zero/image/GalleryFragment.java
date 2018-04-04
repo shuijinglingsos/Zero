@@ -1,4 +1,4 @@
-package com.elf.zerodemo.fragment;
+package com.elf.zero.image;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -22,10 +22,9 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
+import com.elf.zero.R;
 import com.elf.zero.utils.DeviceUtils;
 import com.elf.zero.utils.LogUtils;
-import com.elf.zerodemo.R;
-import com.elf.zerodemo.model.AlbumFile;
 
 import pl.droidsonroids.gif.GifDrawable;
 
@@ -65,7 +64,7 @@ public class GalleryFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mRootView = (ViewGroup) inflater.inflate(R.layout.fragment_gallery, container, false);
+        mRootView = (ViewGroup) inflater.inflate(R.layout.zero_album_fragment_gallery, container, false);
         return mRootView;
     }
 

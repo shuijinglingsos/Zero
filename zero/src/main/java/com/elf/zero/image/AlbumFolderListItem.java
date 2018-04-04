@@ -1,4 +1,4 @@
-package com.elf.zerodemo.widget;
+package com.elf.zero.image;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -7,10 +7,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.elf.zero.R;
 import com.elf.zero.widget.AbsLinearLayout;
-import com.elf.zerodemo.R;
-import com.elf.zerodemo.model.AlbumFile;
-import com.elf.zerodemo.model.AlbumFolder;
 
 /**
  * 文件夹列表项目
@@ -33,7 +31,7 @@ public class AlbumFolderListItem extends AbsLinearLayout {
 
     @Override
     protected int getLayoutResId() {
-        return R.layout.widget_album_folder_list_item;
+        return R.layout.zero_album_widget_folder_list_item;
     }
 
     @Override

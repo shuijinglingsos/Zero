@@ -1,4 +1,4 @@
-package com.elf.zerodemo.adapter;
+package com.elf.zero.image;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -7,10 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+import com.elf.zero.R;
 import com.elf.zero.utils.DeviceUtils;
-import com.elf.zerodemo.R;
-import com.elf.zerodemo.model.AlbumFile;
-import com.elf.zerodemo.widget.AlbumFileListItem;
 
 /**
  * 相册文件列表适配器

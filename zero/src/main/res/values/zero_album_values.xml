@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <color name="button_click_press">#30000000</color>
+
     <color name="album_file_list_item_default">#999999</color>
     <dimen name="album_file_list_space">2dp</dimen>
     <dimen name="album_bottom_height">45dp</dimen>

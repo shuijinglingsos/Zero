@@ -1,4 +1,4 @@
-package com.elf.zerodemo.model;
+package com.elf.zero.image;
 
 import java.util.ArrayList;
 import java.util.List;

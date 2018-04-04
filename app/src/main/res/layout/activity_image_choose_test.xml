@@ -21,6 +21,10 @@
         android:layout_marginTop="10dp"
         android:layout_weight="1" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="系统接口"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -74,6 +78,39 @@
             android:layout_weight="1"
             android:onClick="onCameraCrop"
             android:text="拍照+裁剪" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="自定义相册"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onCustomAlbumSelect"
+            android:text="选择(自定义相册)" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onCustomAlbum"
+            android:text="自定义相册" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onCustomAlbumCrop"
+            android:text="自定义相册+裁剪" />
 
     </LinearLayout>
 

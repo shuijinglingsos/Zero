@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.elf.zerodemo.activity.AlbumActivity">
+    tools:context="com.elf.zero.image.AlbumActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -44,7 +44,7 @@
         android:orientation="horizontal">
 
         <Button
-            android:background="@drawable/button_click_style"
+            android:background="@drawable/zero_album_button_click_style"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:gravity="center"
@@ -62,14 +62,14 @@
             android:layout_weight="1" />
 
         <Button
-            android:id="@+id/btn_send"
-            android:background="@drawable/button_click_style"
+            android:id="@+id/btn_preview"
+            android:background="@drawable/zero_album_button_click_style"
             android:gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:textColor="#FFFFFF"
             android:textSize="@dimen/album_bottom_textSize"
-            android:text="发送(0)"
+            android:text="预览(0)"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             />

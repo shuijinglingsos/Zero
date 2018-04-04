@@ -1,12 +1,9 @@
-package com.elf.zerodemo.adapter;
+package com.elf.zero.image;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.ViewGroup;
-
-import com.elf.zerodemo.fragment.GalleryFragment;
-import com.elf.zerodemo.model.AlbumFile;
 
 import java.util.List;
 

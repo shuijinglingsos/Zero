@@ -29,6 +29,11 @@ public class ImageChooseActivity extends BaseActivity {
 
     private final static String TAG = ImageChooseActivity.class.getSimpleName();
 
+    private final static int REQUEST_CODE_SYSTEM_ALBUM = 1;
+    private final static int REQUEST_CODE_SYSTEM_CAMERA = 2;
+    private final static int REQUEST_CODE_SYSTEM_CROP = 3;
+    private final static int REQUEST_CODE_CUSTOM_ALBUM = 4;
+
     private ImageChoose.ImageChooseParameter mParameter;
     private String mImageCachePath;
     private String mSavePath;  //拍照保存路径
@@ -71,7 +76,7 @@ public class ImageChooseActivity extends BaseActivity {
                         public void run() {
                             finish();
                         }
-                    },200);
+                    }, 200);
                 }
             });
             builder.show();
@@ -92,8 +97,13 @@ public class ImageChooseActivity extends BaseActivity {
      * 打开相册
      */
     private void openAlbum() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, 1);
+        if (mParameter.useCustomAlbum) {
+            //打开自定义相册
+            AlbumActivity.open(this, mParameter.selectCount, REQUEST_CODE_CUSTOM_ALBUM);
+        } else {
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(intent, REQUEST_CODE_SYSTEM_ALBUM);
+        }
     }
 
     /**
@@ -111,7 +121,7 @@ public class ImageChooseActivity extends BaseActivity {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, pathToUri(mSavePath));
-        startActivityForResult(intent, 2);
+        startActivityForResult(intent, REQUEST_CODE_SYSTEM_CAMERA);
     }
 
     /**
@@ -146,11 +156,12 @@ public class ImageChooseActivity extends BaseActivity {
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(saveFile));
 
-        startActivityForResult(intent, 3);
+        startActivityForResult(intent, REQUEST_CODE_SYSTEM_CROP);
     }
 
     /**
      * 根据文件实际路径获取URI
+     *
      * @param path 文件路径
      * @return URI
      */
@@ -164,6 +175,7 @@ public class ImageChooseActivity extends BaseActivity {
 
     /**
      * 根据URI找到文件实际路径
+     *
      * @param uri uri
      * @return 文件实际路径
      */
@@ -197,25 +209,33 @@ public class ImageChooseActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
-            String path = "";
-            if (requestCode == 1) {     //相册选择回调
+            String[] paths = null;
+            if (requestCode == REQUEST_CODE_SYSTEM_ALBUM) {     //相册选择回调
                 Uri uri = data.getData();
                 LogUtils.v(TAG, "uri = " + uri.toString());
                 if (mParameter.isCrop) {
                     openCrop(uri);
                     return;
                 }
-                path = uriToPath(uri);
-            } else if (requestCode == 2) {    //拍照回调
+                paths = new String[]{uriToPath(uri)};
+            } else if (requestCode == REQUEST_CODE_SYSTEM_CAMERA) {    //拍照回调
                 if (mParameter.isCrop) {
                     openCrop(pathToUri(mSavePath));
                     return;
                 }
-                path = mSavePath;
-            } else if (requestCode == 3) {      //裁剪回调
-                path = mCropPath;
+                paths = new String[]{mSavePath};
+            } else if (requestCode == REQUEST_CODE_SYSTEM_CROP) {      //裁剪回调
+                paths = new String[]{mCropPath};
+            } else if (requestCode == REQUEST_CODE_CUSTOM_ALBUM) {      //自定义相册
+                paths = data.getStringArrayExtra("data");
+                if (paths != null && paths.length == 1
+                        && mParameter.selectCount == 1 && mParameter.isCrop) {
+                    //只有选择一个时才能裁剪
+                    openCrop(pathToUri(paths[0]));
+                    return;
+                }
             }
-            ImageChoose.chooseListener().choose(mParameter.listener,new String[]{path});
+            ImageChoose.chooseListener().choose(mParameter.listener, paths);
         } else {
             ImageChoose.chooseListener().cancel(mParameter.listener);
         }

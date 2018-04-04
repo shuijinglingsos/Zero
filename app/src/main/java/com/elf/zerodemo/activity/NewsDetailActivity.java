@@ -92,6 +92,9 @@ public class NewsDetailActivity extends AppBaseActivity {
                     if (convertView == null) {
                         convertView = LayoutInflater.from(mContext).inflate(android.R.layout.simple_list_item_1, parent, false);
                     }
+                    if(position==5){
+                        convertView.setVisibility(View.GONE);
+                    }
                     ((TextView) convertView).setText("评论内容" + position);
                     break;
             }

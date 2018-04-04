@@ -1,26 +1,25 @@
-package com.elf.zerodemo.activity;
+package com.elf.zero.image;
 
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.elf.zerodemo.R;
-import com.elf.zerodemo.adapter.AlbumFileListAdapter;
-import com.elf.zerodemo.adapter.AlbumFolderListAdapter;
-import com.elf.zerodemo.model.AlbumDataSource;
-import com.elf.zerodemo.model.AlbumFile;
-import com.elf.zerodemo.model.AlbumFolder;
+import com.elf.zero.R;
+import com.elf.zero.activity.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,14 +27,14 @@ import java.util.List;
 /**
  * 图片选择
  */
-public class AlbumActivity extends AppBaseActivity {
+public class AlbumActivity extends BaseActivity {
 
     private final static String TAG = AlbumActivity.class.getSimpleName();
 
     private Handler mHandler = new Handler();
     private boolean mRunAnim = false;
     private View mViewFoldersShade;
-    private Button mBtnFolder, mBtnSend;
+    private Button mBtnFolder, mBtnPreview;
     private AbsListView mGvFile, mLvFolder;
     private AlbumFileListAdapter mAlbumFileListAdapter;
     private AlbumFolderListAdapter mAlbumFolderListAdapter;
@@ -45,10 +44,13 @@ public class AlbumActivity extends AppBaseActivity {
     private AlbumDataSource mAlbumDataSource;
     private AlbumFolder mShowAlbumFolder;
 
+    private MenuItem mSendMenu;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_album);
+        setContentView(R.layout.zero_album_activity_album);
+        mSelectedMaxNum = getIntent().getIntExtra("count", 9);
         init();
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -58,6 +60,34 @@ public class AlbumActivity extends AppBaseActivity {
             return;
         }
         showData();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        mSendMenu = menu.add(1, 1, 1, "发送");
+        mSendMenu.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == mSendMenu.getItemId()) {
+            int count = mSelectedFiles.size();
+            if (count > 0) {
+                String[] selected = new String[count];
+                for (int i = 0; i < count; i++) {
+                    selected[i] = mSelectedFiles.get(i).path;
+                }
+                Intent intent = new Intent();
+                intent.putExtra("data", selected);
+                setResult(RESULT_OK, intent);
+                finish();
+            } else {
+                showToast("请选择图片");
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -74,7 +104,7 @@ public class AlbumActivity extends AppBaseActivity {
         mGvFile = (AbsListView) findViewById(R.id.gv_files);
         mLvFolder = (AbsListView) findViewById(R.id.lv_folders);
         mBtnFolder = (Button) findViewById(R.id.btn_folder);
-        mBtnSend = (Button) findViewById(R.id.btn_send);
+        mBtnPreview = (Button) findViewById(R.id.btn_preview);
 
         mBtnFolder.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,7 +112,7 @@ public class AlbumActivity extends AppBaseActivity {
                 onShowFolderList();
             }
         });
-        mBtnSend.setOnClickListener(new View.OnClickListener() {
+        mBtnPreview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 send();
@@ -133,13 +163,13 @@ public class AlbumActivity extends AppBaseActivity {
                         albumFile.checked = true;
                         mSelectedFiles.add(albumFile);
                         mAlbumFileListAdapter.notifyDataSetChanged();
-                        mBtnSend.setText("发送" + "(" + mSelectedFiles.size() + ")");
+                        showSelectCount();
                     }
                 } else {
                     albumFile.checked = false;
                     mSelectedFiles.remove(albumFile);
                     mAlbumFileListAdapter.notifyDataSetChanged();
-                    mBtnSend.setText("发送" + "(" + mSelectedFiles.size() + ")");
+                    showSelectCount();
                 }
             }
         });
@@ -276,6 +306,16 @@ public class AlbumActivity extends AppBaseActivity {
         GalleryActivity.open(this, paths, mSelectedFiles, mSelectedMaxNum, position, 0);
     }
 
+    private void showSelectCount() {
+        int count = mSelectedFiles.size();
+        mBtnPreview.setText("预览" + "(" + count + ")");
+        if (count > 0) {
+            mSendMenu.setTitle("发送" + "(" + count + ")");
+        } else {
+            mSendMenu.setTitle("发送");
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -288,7 +328,13 @@ public class AlbumActivity extends AppBaseActivity {
 
         if (requestCode == 0) {
             mAlbumFileListAdapter.notifyDataSetChanged();
-            mBtnSend.setText("发送" + "(" + mSelectedFiles.size() + ")");
+            showSelectCount();
         }
+    }
+
+    public static void open(Activity activity, int selectCount, int requestCode) {
+        Intent intent = new Intent(activity, AlbumActivity.class);
+        intent.putExtra("count", selectCount);
+        activity.startActivityForResult(intent, requestCode);
     }
 }

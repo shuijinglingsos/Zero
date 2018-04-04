@@ -27,7 +27,14 @@ public class ImageChooseTestActivity extends AppBaseActivity {
         @Override
         public void choose(String[] files) {
             if (files != null && files.length > 0) {
-                mTextView.setText(files[0]);
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < files.length; i++) {
+                    if (i > 0) {
+                        sb.append("\n");
+                    }
+                    sb.append(files[i]);
+                }
+                mTextView.setText(sb.toString());
                 Glide.with(ImageChooseTestActivity.this).load(files[0]).into(mImageView);
             } else {
                 mTextView.setText("没有数据");
@@ -62,5 +69,17 @@ public class ImageChooseTestActivity extends AppBaseActivity {
 
     public void onCameraCrop(View view) {
         ImageChoose.get(this).cropOutput(400, 400).listener(listener).openCamera();
+    }
+
+    public void onCustomAlbumSelect(View view) {
+        ImageChoose.get(this).useCustomAlbum().listener(listener).open();
+    }
+
+    public void onCustomAlbum(View view) {
+        ImageChoose.get(this).useCustomAlbum().listener(listener).openAlbum();
+    }
+
+    public void onCustomAlbumCrop(View view) {
+        ImageChoose.get(this).useCustomAlbum().selectCount(1).cropOutput(400, 400).listener(listener).openAlbum();
     }
 }

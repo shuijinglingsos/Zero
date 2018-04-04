@@ -5,11 +5,12 @@ android {
     buildToolsVersion "26.0.3"
 
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
         versionName "1.0.0"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -23,25 +24,29 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:26.0.0-alpha1'
+
+    //三方
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.10'
+    compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.5.0'
 }
 
 
-//以下开始是将Android Library上传到jcenter的相关配置
-
-apply plugin: 'com.novoda.bintray-release'//添加
-
-publish{
-    userOrg = 'shuijinglingsos'     //bintray.com的用户名
-    repoName = 'KotlinTest'         //远程仓库名字,不指明，默认是上传到maven
-    groupId = 'com.elf.zero'        //jcenter上的路径
-    artifactId = 'KotlinStart'      //项目名称
-    publishVersion = '1.0.1'        //版本号
-    desc = '一个控件阴影效果,支持阴影大小和颜色设置,可以设置控件上下的阴影'       //描述，不重要
-    website = 'http://www.baidu.com'        //项目主页,不重要
-}
-
-tasks.withType(Javadoc) {//防止编码问题
-    options.addStringOption('Xdoclint:none', '-quiet')
-    options.addStringOption('encoding', 'UTF-8')
-    options.addStringOption('charSet', 'UTF-8')
-}
+////以下开始是将Android Library上传到jcenter的相关配置
+//
+//apply plugin: 'com.novoda.bintray-release'//添加
+//
+//publish{
+//    userOrg = 'shuijinglingsos'     //bintray.com的用户名
+//    repoName = 'KotlinTest'         //远程仓库名字,不指明，默认是上传到maven
+//    groupId = 'com.elf.zero'        //jcenter上的路径
+//    artifactId = 'KotlinStart'      //项目名称
+//    publishVersion = '1.0.1'        //版本号
+//    desc = '一个控件阴影效果,支持阴影大小和颜色设置,可以设置控件上下的阴影'       //描述，不重要
+//    website = 'http://www.baidu.com'        //项目主页,不重要
+//}
+//
+//tasks.withType(Javadoc) {//防止编码问题
+//    options.addStringOption('Xdoclint:none', '-quiet')
+//    options.addStringOption('encoding', 'UTF-8')
+//    options.addStringOption('charSet', 'UTF-8')
+//}

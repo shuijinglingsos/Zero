@@ -12,33 +12,46 @@
         android:layout_width="match_parent"
         android:layout_height="130dp" />
 
-    <Button
-        android:layout_marginTop="10dp"
-        android:id="@+id/btnShowIndex"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="onShowIndex"
-        android:text="ShowIndex" />
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/btnAddView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onAddView"
-        android:text="AddItem 5" />
+        <Button
+            android:id="@+id/btnShowIndex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onShowIndex"
+            android:text="ShowIndex" />
 
-    <Button
-        android:id="@+id/btnAutoPlay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onAutoPlay"
-        android:text="AutoPlay" />
+        <Button
+            android:id="@+id/btnAddView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onAddView"
+            android:text="AddItem 5" />
 
-    <Button
-        android:id="@+id/btnStopPlay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onStopPlay"
-        android:text="StopPlay" />
+        <Button
+            android:id="@+id/btnAutoPlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onAutoPlay"
+            android:text="AutoPlay" />
+
+        <Button
+            android:id="@+id/btnStopPlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onStopPlay"
+            android:text="StopPlay" />
+
+    </LinearLayout>
+
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 
 </LinearLayout>

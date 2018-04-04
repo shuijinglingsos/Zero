@@ -38,10 +38,7 @@
             android:theme="@style/AppTheme.Main.TranslucentStatus" />
         <activity android:name=".activity.FlowLayoutActivity" />
         <activity android:name=".activity.PullRefreshLayoutActivity" />
-        <activity android:name=".activity.AlbumActivity" />
-        <activity
-            android:name=".activity.GalleryActivity"
-            android:theme="@style/AppTheme.Gallery" />
+
         <activity android:name=".activity.CrashHandlerActivity" />
         <activity android:name=".activity.NineGridLayoutActivity" />
         <activity android:name=".activity.NestedScrollingActivity" />

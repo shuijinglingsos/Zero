@@ -14,11 +14,11 @@ import java.util.Random;
  */
 public class ImageChoose {
 
-    private final static String TAG=ImageChoose.class.getSimpleName();
+    private final static String TAG = ImageChoose.class.getSimpleName();
 
-    protected final static int OPEN_TYPE_SELECT = 0;
-    protected final static int OPEN_TYPE_ALBUM = 1;
-    protected final static int OPEN_TYPE_CAMERA = 2;
+    protected final static int OPEN_TYPE_SELECT = 0;    //选择
+    protected final static int OPEN_TYPE_ALBUM = 1;     //相册
+    protected final static int OPEN_TYPE_CAMERA = 2;    //相机
 
     private static ChooseListenerManager mChooseListener;
 
@@ -33,18 +33,52 @@ public class ImageChoose {
         return new Build(context);
     }
 
+    /**
+     * 图片选择参数
+     */
     protected static class ImageChooseParameter implements Serializable {
 
-        public int openType;  //0 选择  1相册   2相机
+        /**
+         * 是否使用自定义相册 true使用自定义，false使用系统接口
+         */
+        public boolean useCustomAlbum;
 
+        /**
+         * 0 选择  1相册   2相机
+         */
+        public int openType;
+
+        /**
+         * 回调监听
+         */
         public int listener;
 
+        /**
+         * 是否裁剪(只有选择一张图片时可用）
+         */
         public boolean isCrop;
+        /**
+         * 裁剪宽度
+         */
         public int aspectX;
+        /**
+         * 裁剪高度
+         */
         public int aspectY;
 
+        /**
+         * 裁剪输出宽度
+         */
         public int outputX;
+        /**
+         * 裁剪输出高度
+         */
         public int outputY;
+
+        /**
+         * 选择数量（只有选择使用自定义相册时才管用）(默认为9)
+         */
+        public int selectCount = 9;
     }
 
     /**
@@ -53,7 +87,7 @@ public class ImageChoose {
     public static class Build {
         private Context mContext;
         private OnChooseListener mOnChooseListener;
-        ImageChooseParameter mParameter;
+        private ImageChooseParameter mParameter;
 
         Build(Context context) {
             mContext = context;
@@ -62,6 +96,7 @@ public class ImageChoose {
 
         /**
          * 裁剪
+         *
          * @return this
          */
         public Build crop() {
@@ -71,6 +106,7 @@ public class ImageChoose {
 
         /**
          * 裁剪比例
+         *
          * @param x x
          * @param y y
          * @return this
@@ -84,6 +120,7 @@ public class ImageChoose {
 
         /**
          * 裁剪输出大小
+         *
          * @param x x
          * @param y y
          * @return this
@@ -97,6 +134,7 @@ public class ImageChoose {
 
         /**
          * 监听
+         *
          * @param listener listener
          * @return this
          */
@@ -106,14 +144,32 @@ public class ImageChoose {
         }
 
         /**
+         * 使用自定义相册，不调用此方法，默认使用系统接口
+         */
+        public Build useCustomAlbum() {
+            mParameter.useCustomAlbum = true;
+            return this;
+        }
+
+        /**
+         * 选择数量（只有选择使用自定义相册时才管用）
+         *
+         * @param count 选择数量
+         */
+        public Build selectCount(int count) {
+            mParameter.selectCount = count;
+            return this;
+        }
+
+        /**
          * 打开
          */
         public void open() {
             while (true) {
                 int random = new Random().nextInt(999);
-                if(!chooseListener().contains(random)){
+                if (!chooseListener().contains(random)) {
                     mParameter.listener = random;
-                    chooseListener().put(random,mOnChooseListener);
+                    chooseListener().put(random, mOnChooseListener);
                     break;
                 }
             }

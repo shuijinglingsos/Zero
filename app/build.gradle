@@ -5,7 +5,7 @@ android {
     buildToolsVersion "26.0.3"
     defaultConfig {
         applicationId "com.elf.zerodemo"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -35,7 +35,5 @@ dependencies {
     compile "android.arch.persistence.room:runtime:1.0.0-alpha1"
     annotationProcessor "android.arch.persistence.room:compiler:1.0.0-alpha1"
 
-    //三方
-    compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.10'
-    compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.5.0'
+
 }
