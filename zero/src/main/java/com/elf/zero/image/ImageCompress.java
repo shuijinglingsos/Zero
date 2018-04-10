@@ -15,7 +15,7 @@ public class ImageCompress {
 
     private Context mContext;
 
-    ImageCompress(Context context) {
+    private ImageCompress(Context context) {
         mContext = context;
     }
 
