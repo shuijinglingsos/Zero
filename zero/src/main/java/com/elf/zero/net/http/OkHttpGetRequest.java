@@ -58,14 +58,14 @@ public class OkHttpGetRequest implements HttpGetRequest {
 
     @Override
     public HttpResponse exe() throws IOException {
-        mCall = callBuild(appendParam(mUrl, mParams));
+        mCall = callBuild(appendParam(mUrl, mParams), mHeaders);
         Response response = mCall.execute();
         return OkHttpUtils.convertResponse(response);
     }
 
     @Override
     public void exe(final HttpCallback callback) {
-        mCall = callBuild(appendParam(mUrl, mParams));
+        mCall = callBuild(appendParam(mUrl, mParams), mHeaders);
         mCall.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -90,13 +90,20 @@ public class OkHttpGetRequest implements HttpGetRequest {
         }
     }
 
-    private Call callBuild(String url) {
+    private Call callBuild(String url, Map<String, List<String>> headers) {
         OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
 
-        return client.newCall(request);
+        Request.Builder request = new Request.Builder().url(url);
+
+        if (headers != null && !headers.isEmpty()) {
+            for (String key : headers.keySet()) {
+                for (String value : headers.get(key)) {
+                    request.addHeader(key, value);
+                }
+            }
+        }
+
+        return client.newCall(request.build());
     }
 
     private String appendParam(String url, Map<String, String> param) {
