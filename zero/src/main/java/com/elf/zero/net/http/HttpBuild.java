@@ -33,7 +33,7 @@ public class HttpBuild {
         private HttpGetRequest request;
 
         public Get() {
-            request = null;
+            request = new OkHttpGetRequest();
         }
 
         public Get url(String url) {
