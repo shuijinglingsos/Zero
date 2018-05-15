@@ -1,1 +1,1 @@
-include ':app', ':zero'
+include ':app', ':zero', ':zero-image', ':zero-app'
