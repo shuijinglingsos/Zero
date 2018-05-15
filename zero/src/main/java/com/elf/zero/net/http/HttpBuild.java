@@ -64,14 +64,5 @@ public class HttpBuild {
         public HttpRequest build() {
             return request;
         }
-
-//        public HttpResponse exe() throws IOException {
-//            return request.exe();
-//        }
-//
-//        public void exe(HttpCallback callback) {
-//            request.exe(callback);
-//        }
-
     }
 }

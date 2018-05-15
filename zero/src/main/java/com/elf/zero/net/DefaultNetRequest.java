@@ -290,7 +290,7 @@ public class DefaultNetRequest extends AbstractNetRequest {
 
             URL url_o = new URL(url);
             mHttpURLConnection = (HttpURLConnection) url_o.openConnection();
-            mHttpURLConnection.setRequestMethod("POST");
+            mHttpURLConnection.setRequestMethod(method);
             mHttpURLConnection.setDoInput(true);
             mHttpURLConnection.setDoOutput(true);
             mHttpURLConnection.setUseCaches(false);
