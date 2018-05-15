@@ -12,6 +12,10 @@ import com.elf.zero.net.NetException;
 import com.elf.zero.net.NetRequest;
 import com.elf.zero.net.NetRequestListener;
 import com.elf.zero.net.NetResponse;
+import com.elf.zero.net.http.HttpBuild;
+import com.elf.zero.net.http.HttpCallback;
+import com.elf.zero.net.http.HttpRequest;
+import com.elf.zero.net.http.HttpResponse;
 import com.elf.zerodemo.R;
 
 import java.io.File;
@@ -67,20 +71,43 @@ public class NetRequestActivity extends AppBaseActivity {
     }
 
     public void onGetAsyn(View view) {
-        NetRequest request = new DefaultNetRequest();
-        request.setUrl(getUrl());
-        request.get(null, new NetRequestListener() {
-            @Override
-            public void onSuccess(NetResponse response) {
-                String result = new String(response.getResponseContent());
-                showResult(result);
-            }
 
-            @Override
-            public void onFailure(NetException exception) {
-                showResult(exception.getResponseCode() + " " + exception.getMessage());
-            }
-        });
+        new HttpBuild.Get()
+                .url(getUrl())
+                .header("Content-Type", "application/text")
+                .build()
+                .exe(new HttpCallback() {
+                    @Override
+                    public void success(HttpResponse response) {
+                        if (response.isSuccessful()) {
+                            String result = new String(response.body());
+                            showResult(result);
+                        } else {
+                            showResult(response.code() + " " + response.message());
+                        }
+                    }
+
+                    @Override
+                    public void failure(HttpRequest request, Exception e) {
+                        showResult("failure " + e.getMessage());
+                    }
+                });
+
+
+//        NetRequest request = new DefaultNetRequest();
+//        request.setUrl(getUrl());
+//        request.get(null, new NetRequestListener() {
+//            @Override
+//            public void onSuccess(NetResponse response) {
+//                String result = new String(response.getResponseContent());
+//                showResult(result);
+//            }
+//
+//            @Override
+//            public void onFailure(NetException exception) {
+//                showResult(exception.getResponseCode() + " " + exception.getMessage());
+//            }
+//        });
     }
 
     public void onPost(View view) {
