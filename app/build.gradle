@@ -23,6 +23,25 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+//  applicationVariants.all { variant ->
+//        //这个修改输出的APK路径
+//        if (variant.buildType.name != "debug") {//防止AS无法安装debug包(apk)
+//            variant.getPackageApplication().outputDirectory = new File("d:/apk/"+variant.buildType.name)
+//        }
+////        println '---------------aaaa'
+//        variant.getPackageApplication().outputScope.apkDatas.forEach { apkData ->
+//
+////            println '---------------------------bbbb'
+//            //这个修改输出APK的文件名
+//            apkData.outputFileName =
+//                    variant.flavorName + "-zero-" +
+//                    variant.buildType.name + "-" +
+//                    variant.versionName + "-" +
+//                    variant.versionCode + ".apk"
+//        }
+//    }
+
+
 }
 
 dependencies {
@@ -30,10 +49,7 @@ dependencies {
     compile project(':zero')
     compile 'com.android.support:appcompat-v7:26.0.0-alpha1'
     compile 'com.android.support:design:26.0.0-alpha1'
-
     //room
-    compile "android.arch.persistence.room:runtime:1.0.0-alpha1"
+    compile 'android.arch.persistence.room:runtime:1.0.0-alpha1'
     annotationProcessor "android.arch.persistence.room:compiler:1.0.0-alpha1"
-
-
 }
