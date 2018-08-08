@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.elf.zero.activity.BaseActivity;
+import com.elf.zero.app.BaseActivity;
 import com.elf.zerodemo.R;
 
 public class GroupListActivity extends BaseActivity {

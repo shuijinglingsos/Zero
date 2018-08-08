@@ -3,14 +3,14 @@ package com.elf.zerodemo.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 
-import com.elf.zero.widget.AbsLinearLayout;
+import com.elf.zero.app.BaseLinearLayout;
 import com.elf.zerodemo.R;
 
 /**
  * 记载更多控件
  * Created by Lidong on 2018/1/16.
  */
-public class LoadMoreWidget extends AbsLinearLayout {
+public class LoadMoreWidget extends BaseLinearLayout {
 
     public LoadMoreWidget(Context context) {
         super(context);

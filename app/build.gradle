@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.3"
+
     defaultConfig {
         applicationId "com.elf.zerodemo"
         minSdkVersion 16
@@ -46,10 +46,12 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':zero')
-    compile 'com.android.support:appcompat-v7:26.0.0-alpha1'
-    compile 'com.android.support:design:26.0.0-alpha1'
+    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'com.android.support:design:26.1.0'
     //room
-    compile 'android.arch.persistence.room:runtime:1.0.0-alpha1'
-    annotationProcessor "android.arch.persistence.room:compiler:1.0.0-alpha1"
+    compile 'android.arch.persistence.room:runtime:1.0.0'
+    annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
+    implementation project(':zero-image')
+    implementation project(':zero-net')
+    implementation project(':zero-core')
 }
