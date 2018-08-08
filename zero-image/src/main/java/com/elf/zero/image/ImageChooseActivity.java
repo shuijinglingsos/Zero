@@ -34,7 +34,7 @@ public class ImageChooseActivity extends BaseActivity {
     private final static int REQUEST_CODE_SYSTEM_CROP = 3;
     private final static int REQUEST_CODE_CUSTOM_ALBUM = 4;
 
-    private ImageChoose.ImageChooseParameter mParameter;
+    private ImageChooseParameter mParameter;
     private String mImageCachePath;
     private String mSavePath;  //拍照保存路径
     private String mCropPath;  //裁剪路径
@@ -48,7 +48,7 @@ public class ImageChooseActivity extends BaseActivity {
             finish();
             return;
         }
-        mParameter = (ImageChoose.ImageChooseParameter) intent.getSerializableExtra("data");
+        mParameter = (ImageChooseParameter) intent.getSerializableExtra("data");
         if (mParameter == null) {
             finish();
             return;
@@ -249,7 +249,7 @@ public class ImageChooseActivity extends BaseActivity {
         super.onDestroy();
     }
 
-    public static void open(Context context, ImageChoose.ImageChooseParameter parameter) {
+    public static void open(Context context, ImageChooseParameter parameter) {
         Intent intent = new Intent(context, ImageChooseActivity.class);
         intent.putExtra("data", parameter);
         context.startActivity(intent);
