@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="button_click_press">#30000000</color>
+
+    <color name="zero_image_file_list_item_default">#999999</color>
+    <dimen name="zero_image_file_list_space">2dp</dimen>
+    <dimen name="zero_image_bottom_height">45dp</dimen>
+    <dimen name="zero_image_bottom_textSize">18sp</dimen>
+    <dimen name="zero_image_bottom_marginLeft">20dp</dimen>
+
+    <color name="zero_image_list_background">#000000</color>
+    <color name="zero_image_bottom_background">#444444</color>
+
+    <dimen name="zero_image_folder_list_height">380dp</dimen>
+    <dimen name="zero_image_folder_list_cover_height">60dp</dimen>
+    <dimen name="zero_image_folder_list_item_padding">10dp</dimen>
+    <dimen name="zero_image_folder_list_item_text_margin_left_right">10dp</dimen>
+    <dimen name="zero_image_folder_list_item_textSize">17sp</dimen>
+    <color name="zero_image_folder_list_cover_default">#eeeeee</color>
+
+</resources>

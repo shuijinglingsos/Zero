@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.elf.zero.image.AlbumActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <GridView
+            android:id="@+id/gv_files"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/zero_image_list_background"
+            android:horizontalSpacing="@dimen/zero_image_file_list_space"
+            android:numColumns="4"
+            android:verticalSpacing="@dimen/zero_image_file_list_space" />
+
+        <View
+            android:id="@+id/view_folders_shade"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#dd000000"
+            android:visibility="gone" />
+
+        <ListView
+            android:visibility="gone"
+            android:layout_gravity="bottom"
+            android:id="@+id/lv_folders"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/zero_image_folder_list_height"
+            android:background="#FFFFFF" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/zero_image_bottom_height"
+        android:background="@color/zero_image_bottom_background"
+        android:orientation="horizontal">
+
+        <Button
+            android:background="@drawable/zero_image_button_click_style"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:gravity="center"
+            android:minWidth="110dp"
+            android:id="@+id/btn_folder"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="文件夹"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/zero_image_bottom_textSize" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/btn_preview"
+            android:background="@drawable/zero_image_button_click_style"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/zero_image_bottom_textSize"
+            android:text="预览(0)"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

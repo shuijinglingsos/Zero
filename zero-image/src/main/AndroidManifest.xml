@@ -1,2 +1,32 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.elf.zero.image" />
+    package="com.elf.zero.image">
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:label="@string/app_name"
+        android:supportsRtl="true">
+
+        <activity
+            android:name=".ImageChooseActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/Zero.Image.Translucent" />
+
+        <activity android:name=".AlbumActivity" />
+        <activity
+            android:name=".GalleryActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.elf.zero.image.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/zero_image_file_path" />
+        </provider>
+    </application>
+
+</manifest>
