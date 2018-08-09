@@ -1,7 +1,6 @@
 package com.elf.zero.image;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -11,7 +10,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
 import com.elf.zero.app.BaseActivity;
@@ -57,20 +55,20 @@ public class ImageChooseActivity extends BaseActivity {
         mImageCachePath = FileUtils.getCacheDir() + File.separator + "image";
 
         if (mParameter.openType == ImageChoose.OPEN_TYPE_SELECT) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setItems(new String[]{"从相册中选择", "拍照"}, new DialogInterface.OnClickListener() {
+            ImageChooseDialog.build(this).listener(new ImageChooseDialog.OnOperateListener() {
+
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if (which == 0) {
-                        openAlbum();
-                    } else {
-                        openCamera();
-                    }
+                public void camera() {
+                    openCamera();
                 }
-            });
-            builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+
                 @Override
-                public void onCancel(DialogInterface dialog) {
+                public void album() {
+                    openAlbum();
+                }
+
+                @Override
+                public void cancel() {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -78,8 +76,7 @@ public class ImageChooseActivity extends BaseActivity {
                         }
                     }, 200);
                 }
-            });
-            builder.show();
+            }).show();
             return;
         }
 
@@ -211,6 +208,9 @@ public class ImageChooseActivity extends BaseActivity {
         if (resultCode == RESULT_OK) {
             String[] paths = null;
             if (requestCode == REQUEST_CODE_SYSTEM_ALBUM) {     //相册选择回调
+                if (data == null || data.getData() ==null) {
+                    return;
+                }
                 Uri uri = data.getData();
                 LogUtils.v(TAG, "uri = " + uri.toString());
                 if (mParameter.isCrop) {
@@ -227,6 +227,9 @@ public class ImageChooseActivity extends BaseActivity {
             } else if (requestCode == REQUEST_CODE_SYSTEM_CROP) {      //裁剪回调
                 paths = new String[]{mCropPath};
             } else if (requestCode == REQUEST_CODE_CUSTOM_ALBUM) {      //自定义相册
+                if (data == null) {
+                    return;
+                }
                 paths = data.getStringArrayExtra("data");
                 if (paths != null && paths.length == 1
                         && mParameter.selectCount == 1 && mParameter.isCrop) {
