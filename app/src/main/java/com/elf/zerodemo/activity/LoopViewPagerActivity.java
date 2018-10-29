@@ -1,10 +1,13 @@
 package com.elf.zerodemo.activity;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,8 @@ import com.elf.zerodemo.R;
 import com.elf.zerodemo.widget.LoopViewPager;
 
 public class LoopViewPagerActivity extends AppBaseActivity {
+
+    private final static String TAG=LoopViewPagerActivity.class.getSimpleName();
 
     private LoopViewPager mLoopViewPager;
     private LoopAdapter mLoopAdapter;
@@ -32,6 +37,40 @@ public class LoopViewPagerActivity extends AppBaseActivity {
         mLoopViewPager.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,200));
         mLoopViewPager.setAdapter(mLoopAdapter);
         mLoopViewPager.startAutoPlay();
+
+        mLoopViewPager.getViewPager().addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+//                Log.i(TAG, "position：" + position);
+//                LoopViewPager.ViewPagerItem view = LoopViewPager.getViewByPosition(mLoopViewPager.getViewPager(), position);
+//
+//                Log.i(TAG, "曝光结果：" + exposure(view));
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+//                 View view= LoopViewPager.getViewByPosition(mLoopViewPager.getViewPager(),mLoopViewPager.getRealPosition(position));
+//                Log.i(TAG, "position：" + position);
+//                LoopViewPager.ViewPagerItem view = LoopViewPager.getViewByPosition(mLoopViewPager.getViewPager(), position);
+//
+//                Log.i(TAG, "曝光结果：" + exposure(view));
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                if(state==ViewPager.SCROLL_STATE_IDLE) {
+
+                    int position = mLoopViewPager.getViewPager().getCurrentItem();
+                    Log.i(TAG, "position：" + position);
+                    LoopViewPager.ViewPagerItem view = LoopViewPager.getViewByPosition(mLoopViewPager.getViewPager(), position);
+
+                    boolean result = exposure(view);
+                    showToast("曝光" + (result ? "成功" : "失败")+","+mLoopViewPager.getRealPosition());
+                    Log.i(TAG, "曝光结果：" + result);
+                }
+            }
+        });
 
         mListView = (ListView) findViewById(R.id.listView);
         mListView.addHeaderView(mLoopViewPager);
@@ -55,6 +94,32 @@ public class LoopViewPagerActivity extends AppBaseActivity {
                 preFirst = firstVisibleItem;
             }
         });
+    }
+
+    /**
+     * view曝光
+     */
+    protected boolean exposure(View view) {
+
+//        获取View相对于窗口的位置
+//        int[] viewLocation = new int[2];
+//        view.getLocationInWindow(viewLocation);
+//        Log.i(TAG, "Location: x=" + viewLocation[0] + ",y=" + viewLocation[1]);
+//        Log.i(TAG, "width=" + view.getMeasuredWidth() + ",height=" + view.getMeasuredHeight());
+
+        Rect rect = new Rect();
+        boolean cover = view.getGlobalVisibleRect(rect);
+        Log.i(TAG, "rect=" + rect.toShortString());
+        if (cover) {
+            float viewAre = view.getMeasuredWidth() * view.getMeasuredHeight();
+            float showAre = rect.width() * rect.height();
+            float showPrecent = showAre * 100 / viewAre;
+
+            Log.v(TAG, "曝光范围：ViewAre=" + viewAre + ", showAre=" + showAre + ", precent=" + showPrecent);
+
+            return showPrecent >= 30;  //大于30%为曝光
+        }
+        return false;
     }
 
     public void onShowIndex(View view) {

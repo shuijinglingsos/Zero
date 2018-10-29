@@ -258,7 +258,7 @@ public class LoopViewPager extends FrameLayout {
     /**
      * LoopViewPager项目
      */
-    protected static class ViewPagerItem extends FrameLayout {
+    public static class ViewPagerItem extends FrameLayout {
 
         private View mView;
         private int mIndex;
